@@ -10,13 +10,13 @@ project "Daedalus-Tlang"
 	entrypoint "main"
 
 	files {
-		"example/main.cpp",
-		"example/Tlang/**/*.cpp",
-		"example/include/**/*.hpp",
+		"src/main.cpp",
+		"src/Tlang/**/*.cpp",
+		"src/include/**/*.hpp",
 	}
 
 	includedirs {
-		"example/include",
+		"src/include",
 		"daedalus-core/src/include/"
 	}
 
