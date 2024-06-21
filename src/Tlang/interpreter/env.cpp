@@ -1,13 +1,14 @@
 #include <AquIce/Tlang/interpreter/env.hpp>
 
-bool tlang::env::validate_mutability(daedalus::env::EnvValue value) {
+#include <iostream>
+
+daedalus::env::EnvValue tlang::env::validate_mutability(daedalus::env::EnvValue env_value, std::shared_ptr<daedalus::values::RuntimeValue> new_value, std::string key) {
 	try {
-		return value.properties.at("isMutable") == "true";
+		if(env_value.properties.at("isMutable") == "true") {
+			return daedalus::env::EnvValue{ new_value, env_value.properties };
+		}
 	} catch(const std::exception& e) {
 		throw std::runtime_error("Trying to access undeclared property \"isMutable\"");
 	}
-}
-
-std::string tlang::env::get_mutability_error_message(std::string key, std::string on) {
-	return "Trying to set immutable value \"" + key + "\"";
+	throw std::runtime_error("Trying to assign to immutable value \"" + key + "\"");
 }

@@ -5,8 +5,7 @@
 
 namespace tlang {
 	namespace env {
-		bool validate_mutability(daedalus::env::EnvValue value);
-		std::string get_mutability_error_message(std::string key, std::string on);
+		daedalus::env::EnvValue validate_mutability(daedalus::env::EnvValue env_value, std::shared_ptr<daedalus::values::RuntimeValue> new_value, std::string key);
 	}
 }
 
