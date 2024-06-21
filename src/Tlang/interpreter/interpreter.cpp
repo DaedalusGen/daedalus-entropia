@@ -53,56 +53,59 @@ std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_bin
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue"
 		) {
-			throw std::runtime_error("Trying to add invalid operands");
+			double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
+			double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
+			
+			return std::make_shared<daedalus::values::NumberValue>(left_nb + right_nb);
 		}
 
-		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
-		double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
-		
-		return std::make_shared<daedalus::values::NumberValue>(left_nb + right_nb);
+		throw std::runtime_error("Trying to add invalid operands");
 	}
 	if(operator_symbol == "-") {
 		if(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue"
 		) {
-			throw std::runtime_error("Trying to subtract invalid operands");
+			double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
+			double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
+			
+			return std::make_shared<daedalus::values::NumberValue>(left_nb - right_nb);
 		}
+
+		throw std::runtime_error("Trying to subtract invalid operands");
 		
-		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
-		double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
-		
-		return std::make_shared<daedalus::values::NumberValue>(left_nb - right_nb);
 	}
 	if(operator_symbol == "*") {
 		if(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue"
 		) {
-			throw std::runtime_error("Trying to multiply invalid operands");
+			double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
+			double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
+			
+			return std::make_shared<daedalus::values::NumberValue>(left_nb * right_nb);
 		}
+
+		throw std::runtime_error("Trying to multiply invalid operands");
 		
-		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
-		double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
-		
-		return std::make_shared<daedalus::values::NumberValue>(left_nb * right_nb);
 	}
 	if(operator_symbol == "/") {
 		if(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue"
 		) {
-			throw std::runtime_error("Trying to divide invalid operands");
-		}
-		
-		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
-		double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
+			double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
+			double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
 
-		if(right_nb == 0) {
-			throw std::runtime_error("Trying to divide by zero");
+			if(right_nb == 0) {
+				throw std::runtime_error("Trying to divide by zero");
+			}
+			
+			return std::make_shared<daedalus::values::NumberValue>(left_nb / right_nb);
 		}
+
+		throw std::runtime_error("Trying to divide invalid operands");
 		
-		return std::make_shared<daedalus::values::NumberValue>(left_nb / right_nb);
 	}
 	if(operator_symbol == "&&") {
 		return std::make_shared<tlang::values::BooleanValue>(left->IsTrue() && right->IsTrue());
@@ -191,8 +194,16 @@ void setup_interpreter(daedalus::interpreter::Interpreter& interpreter) {
 		})
 	};
 
+	daedalus::env::EnvValidationRule typeCastValidation = {
+		&tlang::env::validate_type_cast,
+		std::vector<daedalus::env::ValidationRuleSensitivity>({
+			daedalus::env::ValidationRuleSensitivity::SET
+		})
+	};
+
 	std::vector<daedalus::env::EnvValidationRule> validationRules = std::vector<daedalus::env::EnvValidationRule>({
-		mutabilityValidation
+		mutabilityValidation,
+		typeCastValidation
 	});
 
 	daedalus::interpreter::setup_interpreter(
