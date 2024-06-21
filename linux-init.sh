@@ -1,0 +1,1 @@
+premake5 --file=./build-tlang.lua gmake2
