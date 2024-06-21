@@ -1,0 +1,3 @@
+[submodule "daedalus-core"]
+	path = daedalus-core
+	url = https://github.com/DaedalusGen/daedalus-core.git
