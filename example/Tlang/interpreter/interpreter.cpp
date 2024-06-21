@@ -185,6 +185,7 @@ void setup_interpreter(daedalus::interpreter::Interpreter& interpreter) {
 	});
 
 	daedalus::env::EnvValidationRule mutabilityValidation = {
+		&tlang::env::get_mutability_error_message,
 		&tlang::env::validate_mutability,
 		std::vector<daedalus::env::ValidationRuleSensitivity>({
 			daedalus::env::ValidationRuleSensitivity::SET

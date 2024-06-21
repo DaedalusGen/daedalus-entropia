@@ -7,3 +7,7 @@ bool tlang::env::validate_mutability(daedalus::env::EnvValue value) {
 		throw std::runtime_error("Trying to access undeclared property \"isMutable\"");
 	}
 }
+
+std::string tlang::env::get_mutability_error_message(std::string key, std::string on) {
+	return "Trying to set immutable value \"" + key + "\"";
+}
