@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 		&setup_interpreter
 	);
 
-	std::string src = "const i: boolean = true && false || !false i = false";
+	std::string src = "let i: boolean = true && false || !false i = 12 * 4";
 	// std::string src = "3 + 100 * .2 / 1 - 2";
 	// std::string src = "(3 + 100 * .2) / (1 - 2)";
 

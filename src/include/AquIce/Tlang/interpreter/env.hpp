@@ -6,6 +6,7 @@
 namespace tlang {
 	namespace env {
 		daedalus::env::EnvValue validate_mutability(daedalus::env::EnvValue env_value, std::shared_ptr<daedalus::values::RuntimeValue> new_value, std::string key);
+		daedalus::env::EnvValue validate_type_cast(daedalus::env::EnvValue env_value, std::shared_ptr<daedalus::values::RuntimeValue> new_value, std::string key);
 	}
 }
 
