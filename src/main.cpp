@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 		&setup_interpreter
 	);
 
-	std::string src = "let i: boolean = true && false || !false i = 12 * 4";
+	std::string src = "let i: boolean = true && false || !false && 23 i = 12 * 4";
 	// std::string src = "3 + 100 * .2 / 1 - 2";
 	// std::string src = "(3 + 100 * .2) / (1 - 2)";
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
 		tokens
 	);
 
-	std::cout << program->repr() << std::endl;
+	std::cout << "PROGRAM " << program->repr() << std::endl;
 
 	// * INTERPRETER
 

@@ -3,6 +3,8 @@
 
 #include <AquIce/daedalus/ast.hpp>
 
+#include <stdexcept>
+
 namespace tlang {
 	namespace ast {
 
@@ -13,7 +15,8 @@ namespace tlang {
 			std::string get_name();
 
 			virtual std::string type() override;
-			virtual std::string repr(int indent = 0);
+			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
+			virtual std::string repr(int indent = 0) override;
 
 		private:
 			std::string name;
@@ -30,7 +33,8 @@ namespace tlang {
 			std::shared_ptr<daedalus::ast::Expression> get_value();
 
 			virtual std::string type() override;
-			virtual std::string repr(int indent = 0);
+			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
+			virtual std::string repr(int indent = 0) override;
 
 		protected:
 			std::shared_ptr<Identifier> identifier;
@@ -45,7 +49,8 @@ namespace tlang {
 			bool get_mutability();
 
 			virtual std::string type() override;
-			virtual std::string repr(int indent = 0);
+			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
+			virtual std::string repr(int indent = 0) override;
 
 		private:
 			std::string value_type;
@@ -59,7 +64,8 @@ namespace tlang {
 			BooleanExpression(bool value);
 			
 			virtual std::string type() override;
-			virtual std::string repr(int indent = 0);
+			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
+			virtual std::string repr(int indent = 0) override;
 		};
 
 		class UnaryExpression : public daedalus::ast::Expression {
@@ -73,7 +79,8 @@ namespace tlang {
 			std::string get_operator_symbol();
 
 			virtual std::string type() override;
-			virtual std::string repr(int indent = 0);
+			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
+			virtual std::string repr(int indent = 0) override;
 
 		private:
 			std::shared_ptr<Expression> term;
@@ -93,7 +100,8 @@ namespace tlang {
 			std::shared_ptr<Expression> get_right();
 			
 			virtual std::string type() override;
-			virtual std::string repr(int indent = 0);
+			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
+			virtual std::string repr(int indent = 0) override;
 
 		private:
 			std::shared_ptr<Expression> left;

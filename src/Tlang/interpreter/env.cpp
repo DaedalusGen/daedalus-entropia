@@ -15,6 +15,7 @@ daedalus::env::EnvValue tlang::env::validate_mutability(daedalus::env::EnvValue 
 
 daedalus::env::EnvValue tlang::env::validate_type_cast(daedalus::env::EnvValue env_value, std::shared_ptr<daedalus::values::RuntimeValue> new_value, std::string key) {
 	try {
+		std::cout << env_value.value->type() << " " << new_value->type() << std::endl;
 		if(env_value.value->type() == new_value->type()) {
 			return daedalus::env::EnvValue{ new_value, env_value.properties };
 		}
