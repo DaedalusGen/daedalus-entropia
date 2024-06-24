@@ -5,6 +5,8 @@
 
 #include "ast.hpp"
 
+#include <limits>
+
 void setup_parser(daedalus::parser::Parser& parser);
 
 namespace tlang {

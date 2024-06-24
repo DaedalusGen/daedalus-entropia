@@ -4,22 +4,43 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 	std::vector<daedalus::lexer::TokenType> tokenTypes = std::vector<daedalus::lexer::TokenType>({
 		daedalus::lexer::make_token_type("ASSIGN_KEYWORD", "let"),
 		daedalus::lexer::make_token_type("ASSIGN_KEYWORD", "const"),
+
 		daedalus::lexer::make_token_type("SEMICOLON", ";"),
+		
 		daedalus::lexer::make_token_type("COLON", ":"),
+		
 		daedalus::lexer::make_token_type("ASSIGN", "="),
+
 		daedalus::lexer::make_token_type("OPEN_PAREN", "("),
 		daedalus::lexer::make_token_type("CLOSE_PAREN", ")"),
+
 		daedalus::lexer::make_token_type("BINARY_OPERATOR", "+"),
 		daedalus::lexer::make_token_type("BINARY_OPERATOR", "-"),
 		daedalus::lexer::make_token_type("BINARY_OPERATOR", "*"),
 		daedalus::lexer::make_token_type("BINARY_OPERATOR", "/"),
+
 		daedalus::lexer::make_token_type("BINARY_OPERATOR", "&&"),
 		daedalus::lexer::make_token_type("BINARY_OPERATOR", "||"),
+
 		daedalus::lexer::make_token_type("UNARY_OPERATOR", "!"),
+		
 		daedalus::lexer::make_token_type("BOOL", "true"),
 		daedalus::lexer::make_token_type("BOOL", "false"),
-		daedalus::lexer::make_token_type("TYPE", "number"),
-		daedalus::lexer::make_token_type("TYPE", "boolean"),
+
+		daedalus::lexer::make_token_type("TYPE", "i8"),
+		daedalus::lexer::make_token_type("TYPE", "i16"),
+		daedalus::lexer::make_token_type("TYPE", "i32"),
+		daedalus::lexer::make_token_type("TYPE", "i64"),
+		daedalus::lexer::make_token_type("TYPE", "u8"),
+		daedalus::lexer::make_token_type("TYPE", "u16"),
+		daedalus::lexer::make_token_type("TYPE", "u32"),
+		daedalus::lexer::make_token_type("TYPE", "u64"),
+		daedalus::lexer::make_token_type("TYPE", "f32"),
+		daedalus::lexer::make_token_type("TYPE", "f64"),
+		
+		daedalus::lexer::make_token_type("TYPE", "bool"),
+
+
 		daedalus::lexer::make_token_type(
 			"NUMBER",
 			[lexer](std::string src) -> std::string {
