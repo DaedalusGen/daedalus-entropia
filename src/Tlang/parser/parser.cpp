@@ -70,7 +70,7 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_multiplicative_e
 	}
 
 	if(
-		peek(tokens).type == "OPERATOR" &&
+		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "*" || peek(tokens).value == "/")
 	) {
 		std::string operator_symbol = eat(tokens).value;
@@ -94,7 +94,7 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_additive_express
 	}
 
 	if(
-		peek(tokens).type == "OPERATOR" &&
+		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "+" || peek(tokens).value == "-")
 	) {
 		std::string operator_symbol = eat(tokens).value;
@@ -118,7 +118,7 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_logical_expressi
 	}
 
 	if(
-		peek(tokens).type == "OPERATOR" &&
+		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "&&" || peek(tokens).value == "||")
 	) {
 		std::string operator_symbol = eat(tokens).value;
