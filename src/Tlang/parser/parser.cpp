@@ -268,13 +268,34 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expre
 			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
+	else if(type == "f32") {
+		T_ERROR_ASSERT(
+			expression->type() == "NumberExpression",
+			std::runtime_error("Expected valid f32 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + expression->repr())
+		)
+		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
+		T_ERROR_ASSERT(
+			(numberExpression->value >= FLT_MIN && numberExpression->value <= FLT_MAX),
+			std::runtime_error("Expected valid u64 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + std::to_string(numberExpression->value))
+		)
+	}
+	else if(type == "f64") {
+		T_ERROR_ASSERT(
+			expression->type() == "NumberExpression",
+			std::runtime_error("Expected valid f64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + expression->repr())
+		)
+		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
+		T_ERROR_ASSERT(
+			(numberExpression->value >= DBL_MIN && numberExpression->value <= DBL_MAX),
+			std::runtime_error("Expected valid u64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + std::to_string(numberExpression->value))
+		)
+	}
 	else if(type == "bool") {
 		T_ERROR_ASSERT(
 			expression->type() == "BooleanExpression",
 			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
 		)
 	}
-	// TODO Add F32 + F64
 
 	return std::make_shared<tlang::ast::AssignationExpression>(identifier, expression);
 }
@@ -409,13 +430,34 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
+	else if(type == "f32") {
+		T_ERROR_ASSERT(
+			expression->type() == "NumberExpression",
+			std::runtime_error("Expected valid f32 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + expression->repr())
+		)
+		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
+		T_ERROR_ASSERT(
+			(numberExpression->value >= FLT_MIN && numberExpression->value <= FLT_MAX),
+			std::runtime_error("Expected valid u64 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + std::to_string(numberExpression->value))
+		)
+	}
+	else if(type == "f64") {
+		T_ERROR_ASSERT(
+			expression->type() == "NumberExpression",
+			std::runtime_error("Expected valid f64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + expression->repr())
+		)
+		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
+		T_ERROR_ASSERT(
+			(numberExpression->value >= DBL_MIN && numberExpression->value <= DBL_MAX),
+			std::runtime_error("Expected valid u64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + std::to_string(numberExpression->value))
+		)
+	}
 	else if(type == "bool") {
 		T_ERROR_ASSERT(
 			expression->type() == "BooleanExpression",
 			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
 		)
 	}
-	// TODO Add F32 + F64
 
 	tlang::parser::identifiers[identifier->get_name()] = type;
 	return std::make_shared<tlang::ast::DeclarationExpression>(identifier, expression, type, isMutable);

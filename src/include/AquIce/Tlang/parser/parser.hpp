@@ -7,6 +7,7 @@
 
 #include <unordered_map>
 #include <limits>
+#include <float.h>
 
 void setup_parser(daedalus::parser::Parser& parser);
 
