@@ -2,6 +2,7 @@
 #define __T_PARSER__
 
 #include <AquIce/daedalus/parser.hpp>
+#include <AquIce/daedalus/unit.hpp>
 
 #include "ast.hpp"
 

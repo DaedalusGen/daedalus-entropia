@@ -1,11 +1,5 @@
 #include <AquIce/Tlang/parser/parser.hpp>
 
-// TODO Remove this
-#define T_ERROR_ASSERT(condition, error) \
-if(!(condition)) { \
-	throw error; \
-}
-
 void setup_parser(daedalus::parser::Parser& parser) {
 
 	daedalus::parser::setup_parser(
@@ -181,117 +175,117 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expre
 	std::string type = tlang::parser::identifiers.at(identifier->get_name());
 
 	if(type == "i8") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= _I8_MIN && numberExpression->value <= _I8_MAX),
 			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "i16") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= _I16_MIN && numberExpression->value <= _I16_MAX),
 			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "i32") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= _I32_MIN && numberExpression->value <= _I32_MAX),
 			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "i64") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= _I64_MIN && numberExpression->value <= _I64_MAX),
 			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "u8") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= 0 && numberExpression->value <= _UI8_MAX),
 			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "u16") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= 0 && numberExpression->value <= _UI16_MAX),
 			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "u32") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= 0 && numberExpression->value <= _UI32_MAX),
 			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "u64") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= 0 && numberExpression->value <= _UI64_MAX),
 			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "f32") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid f32 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= FLT_MIN && numberExpression->value <= FLT_MAX),
 			std::runtime_error("Expected valid u64 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "f64") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid f64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= DBL_MIN && numberExpression->value <= DBL_MAX),
 			std::runtime_error("Expected valid u64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "bool") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "BooleanExpression",
 			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
 		)
@@ -343,117 +337,117 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 	// TODO Add i + u types to interpreter
 
 	if(type == "i8") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= _I8_MIN && numberExpression->value <= _I8_MAX),
 			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "i16") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= _I16_MIN && numberExpression->value <= _I16_MAX),
 			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "i32") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= _I32_MIN && numberExpression->value <= _I32_MAX),
 			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "i64") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= _I64_MIN && numberExpression->value <= _I64_MAX),
 			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "u8") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= 0 && numberExpression->value <= _UI8_MAX),
 			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "u16") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= 0 && numberExpression->value <= _UI16_MAX),
 			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "u32") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= 0 && numberExpression->value <= _UI32_MAX),
 			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "u64") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= 0 && numberExpression->value <= _UI64_MAX),
 			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "f32") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid f32 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= FLT_MIN && numberExpression->value <= FLT_MAX),
 			std::runtime_error("Expected valid u64 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "f64") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
 			std::runtime_error("Expected valid f64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + expression->repr())
 		)
 		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(expression);
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			(numberExpression->value >= DBL_MIN && numberExpression->value <= DBL_MAX),
 			std::runtime_error("Expected valid u64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + std::to_string(numberExpression->value))
 		)
 	}
 	else if(type == "bool") {
-		T_ERROR_ASSERT(
+		DAE_ASSERT_TRUE(
 			expression->type() == "BooleanExpression",
 			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
 		)
