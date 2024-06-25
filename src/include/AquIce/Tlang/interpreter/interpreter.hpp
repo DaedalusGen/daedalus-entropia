@@ -8,6 +8,8 @@
 
 void setup_interpreter(daedalus::interpreter::Interpreter& interpreter);
 
+// TODO Add i + u types to interpreter
+
 namespace tlang {
 	namespace interpreter {
 		std::shared_ptr<daedalus::values::RuntimeValue> evaluate_identifier(

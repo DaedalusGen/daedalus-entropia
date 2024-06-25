@@ -334,8 +334,6 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 		}
 	}
 
-	// TODO Add i + u types to interpreter
-
 	if(type == "i8") {
 		DAE_ASSERT_TRUE(
 			expression->type() == "NumberExpression",
