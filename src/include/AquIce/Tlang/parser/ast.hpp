@@ -70,7 +70,7 @@ namespace tlang {
 
 		class ContainerExpression : public daedalus::ast::Expression {
 		public:
-			virtual bool contains_identifier();
+			virtual std::shared_ptr<tlang::ast::Identifier> contains_identifier();
 		};
 
 		class UnaryExpression : public ContainerExpression {
@@ -83,7 +83,7 @@ namespace tlang {
 			std::shared_ptr<Expression> get_term();
 			std::string get_operator_symbol();
 
-			virtual bool contains_identifier() override;
+			virtual std::shared_ptr<tlang::ast::Identifier> contains_identifier() override;
 
 			virtual std::string type() override;
 			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
@@ -106,15 +106,15 @@ namespace tlang {
 			std::string get_operator_symbol();
 			std::shared_ptr<Expression> get_right();
 			
-			virtual bool contains_identifier() override;
+			virtual std::shared_ptr<tlang::ast::Identifier> contains_identifier() override;
 
 			virtual std::string type() override;
 			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
 			virtual std::string repr(int indent = 0) override;
 
 		private:
-			bool left_contains_identifier();
-			bool right_contains_identifier();
+			std::shared_ptr<tlang::ast::Identifier> left_contains_identifier();
+			std::shared_ptr<tlang::ast::Identifier> right_contains_identifier();
 
 		private:
 			std::shared_ptr<Expression> left;

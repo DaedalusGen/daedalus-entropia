@@ -106,8 +106,8 @@ std::string tlang::ast::BooleanExpression::repr(int indent) {
 
 #pragma region ContainerExpression
 
-bool tlang::ast::ContainerExpression::contains_identifier() {
-	return false;
+std::shared_ptr<tlang::ast::Identifier> tlang::ast::ContainerExpression::contains_identifier() {
+	return nullptr;
 }
 
 #pragma endregion
@@ -130,7 +130,7 @@ std::string tlang::ast::UnaryExpression::get_operator_symbol() {
 	return this->operator_symbol;
 }
 
-bool tlang::ast::UnaryExpression::contains_identifier() {
+std::shared_ptr<tlang::ast::Identifier> tlang::ast::UnaryExpression::contains_identifier() {
 
 	std::shared_ptr<daedalus::ast::Expression> constexprTerm = this->term->get_constexpr();
 
@@ -141,7 +141,7 @@ bool tlang::ast::UnaryExpression::contains_identifier() {
 		return std::dynamic_pointer_cast<tlang::ast::BinaryExpression>(constexprTerm)->contains_identifier();
 	}
 
-	return constexprTerm->type() == "Identifier";
+	return constexprTerm->type() == "Identifier" ? std::dynamic_pointer_cast<tlang::ast::Identifier>(constexprTerm) : nullptr;
 }
 
 std::string tlang::ast::UnaryExpression::type() {
@@ -189,8 +189,12 @@ std::shared_ptr<daedalus::ast::Expression> tlang::ast::BinaryExpression::get_rig
 	return this->right;
 }
 
-bool tlang::ast::BinaryExpression::contains_identifier() {
-	return this->left_contains_identifier() || this->right_contains_identifier();
+std::shared_ptr<tlang::ast::Identifier> tlang::ast::BinaryExpression::contains_identifier() {
+	std::shared_ptr<tlang::ast::Identifier> leftIdentifier = this->left_contains_identifier();
+	if(leftIdentifier != nullptr) {
+		return leftIdentifier;
+	}
+	return this->right_contains_identifier();
 }
 
 std::string tlang::ast::BinaryExpression::type() {
@@ -280,11 +284,9 @@ std::string tlang::ast::BinaryExpression::repr(int indent) {
 		std::string(indent, '\t') + ")";
 }
 #include <iostream>
-bool tlang::ast::BinaryExpression::left_contains_identifier() {
+std::shared_ptr<tlang::ast::Identifier> tlang::ast::BinaryExpression::left_contains_identifier() {
 
 	std::shared_ptr<daedalus::ast::Expression> constexprLeft = this->left->get_constexpr();
-
-	std::cout << constexprLeft->type() << std::endl;
 
 	if(constexprLeft->type() == "UnaryExpression") {
 		return std::dynamic_pointer_cast<tlang::ast::UnaryExpression>(constexprLeft)->contains_identifier();
@@ -293,9 +295,9 @@ bool tlang::ast::BinaryExpression::left_contains_identifier() {
 		return std::dynamic_pointer_cast<tlang::ast::BinaryExpression>(constexprLeft)->contains_identifier();
 	}
 
-	return constexprLeft->type() == "Identifier";
+	return constexprLeft->type() == "Identifier" ? std::dynamic_pointer_cast<tlang::ast::Identifier>(constexprLeft) : nullptr;
 }
-bool tlang::ast::BinaryExpression::right_contains_identifier() {
+std::shared_ptr<tlang::ast::Identifier> tlang::ast::BinaryExpression::right_contains_identifier() {
 
 	std::shared_ptr<daedalus::ast::Expression> constexprRight = this->right->get_constexpr();
 
@@ -306,7 +308,7 @@ bool tlang::ast::BinaryExpression::right_contains_identifier() {
 		return std::dynamic_pointer_cast<tlang::ast::BinaryExpression>(constexprRight)->contains_identifier();
 	}
 
-	return constexprRight->type() == "Identifier";
+	return constexprRight->type() == "Identifier" ? std::dynamic_pointer_cast<tlang::ast::Identifier>(constexprRight) : nullptr;
 }
 
 #pragma endregion

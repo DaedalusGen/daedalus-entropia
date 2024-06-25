@@ -5,12 +5,15 @@
 
 #include "ast.hpp"
 
+#include <unordered_map>
 #include <limits>
 
 void setup_parser(daedalus::parser::Parser& parser);
 
 namespace tlang {
 	namespace parser {
+		extern std::unordered_map<std::string, std::string> identifiers;
+
 		std::shared_ptr<daedalus::ast::Expression> parse_identifier(std::vector<daedalus::lexer::Token>& tokens);
 
 		std::shared_ptr<daedalus::ast::Expression> parse_boolean_expression(std::vector<daedalus::lexer::Token>& tokens);
