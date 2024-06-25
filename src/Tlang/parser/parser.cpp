@@ -207,6 +207,14 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 
 	std::shared_ptr<daedalus::ast::Expression> expression = tlang::parser::parse_binary_expression(tokens)->get_constexpr();
 
+	if(std::shared_ptr<tlang::ast::ContainerExpression> containerExpression = std::dynamic_pointer_cast<tlang::ast::ContainerExpression>(expression)) {
+		if(std::dynamic_pointer_cast<tlang::ast::ContainerExpression>(expression)->contains_identifier()) {
+			return std::make_shared<tlang::ast::DeclarationExpression>(identifier, expression, type, isMutable);
+		}
+	}
+
+	// TODO Add i + u types to interpreter
+
 	if(type == "i8") {
 		T_ERROR_ASSERT(
 			expression->type() == "NumberExpression",
@@ -302,8 +310,6 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 		)
 	}
 	// TODO Add F32 + F64
-
-	std::cout <<  std::make_shared<tlang::ast::DeclarationExpression>(identifier, expression, type, isMutable)->repr() << std::endl;
 
 	return std::make_shared<tlang::ast::DeclarationExpression>(identifier, expression, type, isMutable);
 }

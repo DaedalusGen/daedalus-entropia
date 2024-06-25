@@ -104,6 +104,14 @@ std::string tlang::ast::BooleanExpression::repr(int indent) {
 
 #pragma endregion
 
+#pragma region ContainerExpression
+
+bool tlang::ast::ContainerExpression::contains_identifier() {
+	return false;
+}
+
+#pragma endregion
+
 #pragma region UnaryExpression
 
 tlang::ast::UnaryExpression::UnaryExpression(
@@ -120,6 +128,20 @@ std::shared_ptr<daedalus::ast::Expression> tlang::ast::UnaryExpression::get_term
 
 std::string tlang::ast::UnaryExpression::get_operator_symbol() {
 	return this->operator_symbol;
+}
+
+bool tlang::ast::UnaryExpression::contains_identifier() {
+
+	std::shared_ptr<daedalus::ast::Expression> constexprTerm = this->term->get_constexpr();
+
+	if(constexprTerm->type() == "UnaryExpression") {
+		return std::dynamic_pointer_cast<tlang::ast::UnaryExpression>(constexprTerm)->contains_identifier();
+	}
+	if(constexprTerm->type() == "BinaryExpression") {
+		return std::dynamic_pointer_cast<tlang::ast::BinaryExpression>(constexprTerm)->contains_identifier();
+	}
+
+	return constexprTerm->type() == "Identifier";
 }
 
 std::string tlang::ast::UnaryExpression::type() {
@@ -165,6 +187,10 @@ std::string tlang::ast::BinaryExpression::get_operator_symbol() {
 }
 std::shared_ptr<daedalus::ast::Expression> tlang::ast::BinaryExpression::get_right() {
 	return this->right;
+}
+
+bool tlang::ast::BinaryExpression::contains_identifier() {
+	return this->left_contains_identifier() || this->right_contains_identifier();
 }
 
 std::string tlang::ast::BinaryExpression::type() {
@@ -252,6 +278,35 @@ std::string tlang::ast::BinaryExpression::repr(int indent) {
 		std::string(indent + 1, '\t') + this->operator_symbol + "\n" +
 		this->right->repr(indent + 1) + "\n" +
 		std::string(indent, '\t') + ")";
+}
+#include <iostream>
+bool tlang::ast::BinaryExpression::left_contains_identifier() {
+
+	std::shared_ptr<daedalus::ast::Expression> constexprLeft = this->left->get_constexpr();
+
+	std::cout << constexprLeft->type() << std::endl;
+
+	if(constexprLeft->type() == "UnaryExpression") {
+		return std::dynamic_pointer_cast<tlang::ast::UnaryExpression>(constexprLeft)->contains_identifier();
+	}
+	if(constexprLeft->type() == "BinaryExpression") {
+		return std::dynamic_pointer_cast<tlang::ast::BinaryExpression>(constexprLeft)->contains_identifier();
+	}
+
+	return constexprLeft->type() == "Identifier";
+}
+bool tlang::ast::BinaryExpression::right_contains_identifier() {
+
+	std::shared_ptr<daedalus::ast::Expression> constexprRight = this->right->get_constexpr();
+
+	if(constexprRight->type() == "UnaryExpression") {
+		return std::dynamic_pointer_cast<tlang::ast::UnaryExpression>(constexprRight)->contains_identifier();
+	}
+	if(constexprRight->type() == "BinaryExpression") {
+		return std::dynamic_pointer_cast<tlang::ast::BinaryExpression>(constexprRight)->contains_identifier();
+	}
+
+	return constexprRight->type() == "Identifier";
 }
 
 #pragma endregion
