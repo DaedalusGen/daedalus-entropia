@@ -49,9 +49,10 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 				bool isInteger = true;
 				while(isdigit(src.at(i)) || src.at(i) == lexer.decimalSeparator) {
 					if(src.at(i) == lexer.decimalSeparator) {
-						if(!isInteger) {
-							throw std::runtime_error("Invalid number format");
-						}
+						DAE_ASSERT_TRUE(
+							isInteger,
+							std::runtime_error("Invalid number format");
+						)
 						isInteger = false;
 					}
 					number += src.at(i);

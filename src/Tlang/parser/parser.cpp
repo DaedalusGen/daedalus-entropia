@@ -60,12 +60,14 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression
 	} else if(peek(tokens).value == "-") {
 		(void)eat(tokens);
 		std::shared_ptr<daedalus::ast::Expression> term = parse_boolean_expression(tokens)->get_constexpr();
-		if(term->type() == "NumberExpression") {
-			std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(term);
-			numberExpression->value *= -1;
-			return numberExpression;
-		}
-		throw std::runtime_error("Invalid or not supported negative term");
+		DAE_ASSERT_TRUE(
+			term->type() == "NumberExpression",
+			std::runtime_error("Invalid or not supported negative term")
+		)
+		std::shared_ptr<daedalus::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::ast::NumberExpression>(term);
+		numberExpression->value *= -1;
+
+		return numberExpression;
 	}
 	
 	std::shared_ptr<daedalus::ast::Expression> term = tlang::parser::parse_boolean_expression(tokens);
@@ -304,25 +306,29 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 	
 	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_identifier(tokens);
 
-	if(pseudoIdentifier->type() != "Identifier") {
-		throw std::runtime_error("Expected identifier");
-	}
+	DAE_ASSERT_TRUE(
+		pseudoIdentifier->type() == "Identifier",
+		std::runtime_error("Expected identifier")
+	)
 
 	std::shared_ptr<tlang::ast::Identifier> identifier = std::dynamic_pointer_cast<tlang::ast::Identifier>(pseudoIdentifier);
 
-	if(peek(tokens).type != "COLON") {
-		throw std::runtime_error("Expected colon");
-	}
+	DAE_ASSERT_TRUE(
+		peek(tokens).type == "COLON",
+		std::runtime_error("Expected colon")
+	)
 	(void)eat(tokens);
 
-	if(peek(tokens).type != "TYPE") {
-		throw std::runtime_error("Expected type specifier");
-	}
+	DAE_ASSERT_TRUE(
+		peek(tokens).type == "TYPE",
+		std::runtime_error("Expected type specifier")
+	)
 	std::string type = eat(tokens).value;
 
-	if(peek(tokens).type != "ASSIGN") {
-		throw std::runtime_error("Expected assignment symbol");
-	}
+	DAE_ASSERT_TRUE(
+		peek(tokens).type == "ASSIGN",
+		std::runtime_error("Expected assignment symbol")
+	)
 	(void)eat(tokens);
 
 	std::shared_ptr<daedalus::ast::Expression> expression = tlang::parser::parse_binary_expression(tokens)->get_constexpr();

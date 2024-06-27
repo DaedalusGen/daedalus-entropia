@@ -2,6 +2,7 @@
 #define __T_AST__
 
 #include <AquIce/daedalus/ast.hpp>
+#include <AquIce/daedalus/unit.hpp>
 
 #include <stdexcept>
 

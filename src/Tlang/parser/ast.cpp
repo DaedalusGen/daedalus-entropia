@@ -218,9 +218,10 @@ std::shared_ptr<daedalus::ast::Expression> tlang::ast::BinaryExpression::get_con
 			return std::make_shared<daedalus::ast::NumberExpression>(leftNb->value * rightNb->value);
 		}
 		if(this->operator_symbol == "/") {
-			if(rightNb->value == 0) {
-				throw std::runtime_error("Trying to divide by zero");
-			}
+			DAE_ASSERT_TRUE(
+				rightNb->value != 0,
+				std::runtime_error("Trying to divide by zero")
+			)
 			return std::make_shared<daedalus::ast::NumberExpression>(leftNb->value / rightNb->value);
 		}
 		if(this->operator_symbol == "&&") {

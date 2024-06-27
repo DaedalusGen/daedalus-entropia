@@ -49,63 +49,57 @@ std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_bin
 	std::string operator_symbol = binaryExpression->get_operator_symbol();
 
 	if(operator_symbol == "+") {
-		if(
+		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
-			right->type() == "NumberValue"
-		) {
-			double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
-			double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
-			
-			return std::make_shared<daedalus::values::NumberValue>(left_nb + right_nb);
-		}
+			right->type() == "NumberValue",
+			std::runtime_error("Trying to add invalid operands")
+		)
 
-		throw std::runtime_error("Trying to add invalid operands");
+		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
+		double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
+		
+		return std::make_shared<daedalus::values::NumberValue>(left_nb + right_nb);
 	}
 	if(operator_symbol == "-") {
-		if(
+		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
-			right->type() == "NumberValue"
-		) {
-			double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
-			double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
-			
-			return std::make_shared<daedalus::values::NumberValue>(left_nb - right_nb);
-		}
+			right->type() == "NumberValue",
+			std::runtime_error("Trying to subtract invalid operands")
+		)
 
-		throw std::runtime_error("Trying to subtract invalid operands");
+		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
+		double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
 		
+		return std::make_shared<daedalus::values::NumberValue>(left_nb - right_nb);		
 	}
 	if(operator_symbol == "*") {
-		if(
+		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
-			right->type() == "NumberValue"
-		) {
-			double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
-			double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
-			
-			return std::make_shared<daedalus::values::NumberValue>(left_nb * right_nb);
-		}
+			right->type() == "NumberValue",
+			std::runtime_error("Trying to multiply invalid operands")
+		)
 
-		throw std::runtime_error("Trying to multiply invalid operands");
+		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
+		double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
 		
+		return std::make_shared<daedalus::values::NumberValue>(left_nb * right_nb);		
 	}
 	if(operator_symbol == "/") {
-		if(
+		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
-			right->type() == "NumberValue"
-		) {
-			double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
-			double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
+			right->type() == "NumberValue",
+			std::runtime_error("Trying to divide invalid operands");
+		)
 
-			if(right_nb == 0) {
-				throw std::runtime_error("Trying to divide by zero");
-			}
-			
-			return std::make_shared<daedalus::values::NumberValue>(left_nb / right_nb);
-		}
+		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
+		double right_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(right)->get();
 
-		throw std::runtime_error("Trying to divide invalid operands");
+		DAE_ASSERT_TRUE(
+			right_nb != 0,
+			std::runtime_error("Trying to divide by zero");
+		)
 		
+		return std::make_shared<daedalus::values::NumberValue>(left_nb / right_nb);
 	}
 	if(operator_symbol == "&&") {
 		return std::make_shared<tlang::values::BooleanValue>(left->IsTrue() && right->IsTrue());
