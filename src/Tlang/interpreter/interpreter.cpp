@@ -52,7 +52,7 @@ std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_bin
 		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue",
-			std::runtime_error("Trying to add invalid operands")
+			std::runtime_error("Trying to add invalid operands : " + left->type() + " - " + right->type())
 		)
 
 		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
@@ -64,7 +64,7 @@ std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_bin
 		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue",
-			std::runtime_error("Trying to subtract invalid operands")
+			std::runtime_error("Trying to subtract invalid operands : " + left->type() + " - " + right->type())
 		)
 
 		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
@@ -76,7 +76,7 @@ std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_bin
 		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue",
-			std::runtime_error("Trying to multiply invalid operands")
+			std::runtime_error("Trying to multiply invalid invalid operands : " + left->type() + " - " + right->type())
 		)
 
 		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();
@@ -88,7 +88,7 @@ std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_bin
 		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue",
-			std::runtime_error("Trying to divide invalid operands");
+			std::runtime_error("Trying to divide invalid invalid operands : " + left->type() + " - " + right->type());
 		)
 
 		double left_nb = std::dynamic_pointer_cast<daedalus::values::NumberValue>(left)->get();

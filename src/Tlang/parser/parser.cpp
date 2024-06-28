@@ -64,6 +64,13 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression
 	} else if(peek(tokens).value == "-") {
 		(void)eat(tokens);
 		std::shared_ptr<daedalus::ast::Expression> term = parse_boolean_expression(tokens)->get_constexpr();
+		if(term->type() == "Identifier") {
+			return std::make_shared<tlang::ast::BinaryExpression>(
+				std::make_shared<daedalus::ast::NumberExpression>(0),
+				"-",
+				term
+			);
+		}
 		DAE_ASSERT_TRUE(
 			term->type() == "NumberExpression",
 			std::runtime_error("Invalid or not supported negative term")

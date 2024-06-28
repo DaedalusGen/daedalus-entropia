@@ -265,8 +265,8 @@ std::shared_ptr<daedalus::ast::Expression> tlang::ast::BinaryExpression::get_con
 		}
 		throw std::runtime_error("Invalid operator for BooleanExpression and NumberExpression");
 	}
-	
-	if(left->type() == "Identifier" || left->type() == "Identifier") {
+
+	if(left->type() == "Identifier" || right->type() == "Identifier") {
 		return std::make_shared<tlang::ast::BinaryExpression>(
 			left,
 			this->operator_symbol,
