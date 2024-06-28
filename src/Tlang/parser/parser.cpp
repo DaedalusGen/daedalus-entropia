@@ -57,6 +57,10 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression
 
 	if(peek(tokens).type == "UNARY_OPERATOR") {
 		operator_symbol = eat(tokens).value;
+		DAE_ASSERT_TRUE(
+			operator_symbol == "!",
+			std::runtime_error("Invalid unary operator")
+		)
 	} else if(peek(tokens).value == "-") {
 		(void)eat(tokens);
 		std::shared_ptr<daedalus::ast::Expression> term = parse_boolean_expression(tokens)->get_constexpr();

@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 		&setup_interpreter
 	);
 
-	std::string src = "let i: f32 = 12 * 3 let j: i8 = i * 2";
+	std::string src = "let i: bool = true let j: bool = !i";
 	// TODO Add expect to functions (=) 
 	// std::string src = "3 + 100 * .2 / 1 - 2";
 	// std::string src = "(3 + 100 * .2) / (1 - 2)";
