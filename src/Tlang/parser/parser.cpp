@@ -313,23 +313,11 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 
 	std::shared_ptr<tlang::ast::Identifier> identifier = std::dynamic_pointer_cast<tlang::ast::Identifier>(pseudoIdentifier);
 
-	DAE_ASSERT_TRUE(
-		peek(tokens).type == "COLON",
-		std::runtime_error("Expected colon")
-	)
-	(void)eat(tokens);
+	(void)expect(tokens, "COLON", std::runtime_error("Expected colon"));
 
-	DAE_ASSERT_TRUE(
-		peek(tokens).type == "TYPE",
-		std::runtime_error("Expected type specifier")
-	)
-	std::string type = eat(tokens).value;
+	std::string type = expect(tokens, "TYPE", std::runtime_error("Expected type specifier")).type;
 
-	DAE_ASSERT_TRUE(
-		peek(tokens).type == "ASSIGN",
-		std::runtime_error("Expected assignment symbol")
-	)
-	(void)eat(tokens);
+	(void)expect(tokens, "ASSIGN", std::runtime_error("Expected assignment symbol"));
 
 	std::shared_ptr<daedalus::ast::Expression> expression = tlang::parser::parse_binary_expression(tokens)->get_constexpr();
 
