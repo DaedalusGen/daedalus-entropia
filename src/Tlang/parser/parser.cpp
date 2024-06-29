@@ -314,7 +314,7 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 
 	(void)expect(tokens, "COLON", std::runtime_error("Expected colon"));
 
-	std::string type = expect(tokens, "TYPE", std::runtime_error("Expected type specifier")).type;
+	std::string type = expect(tokens, "TYPE", std::runtime_error("Expected type specifier")).value;
 
 	(void)expect(tokens, "ASSIGN", std::runtime_error("Expected assignment symbol"));
 
