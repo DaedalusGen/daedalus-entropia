@@ -89,10 +89,6 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression
 std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_multiplicative_expression(std::vector<daedalus::lexer::Token>& tokens) {
 	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_unary_expression(tokens);
 
-	if(left == nullptr) {
-		return nullptr;
-	}
-
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "*" || peek(tokens).value == "/")
@@ -113,10 +109,6 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_multiplicative_e
 std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_additive_expression(std::vector<daedalus::lexer::Token>& tokens) {
 	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_multiplicative_expression(tokens);
 
-	if(left == nullptr) {
-		return nullptr;
-	}
-
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "+" || peek(tokens).value == "-")
@@ -136,10 +128,6 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_additive_express
 
 std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_logical_expression(std::vector<daedalus::lexer::Token>& tokens) {
 	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_additive_expression(tokens);
-
-	if(left == nullptr) {
-		return nullptr;
-	}
 
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
