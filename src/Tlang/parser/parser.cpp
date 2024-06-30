@@ -51,6 +51,23 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_boolean_expressi
 	return tlang::parser::parse_identifier(parser, tokens);
 }
 
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_parenthesis_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
+	if(peek(tokens).type != "OPEN_PAREN") {
+		return parse_boolean_expression(parser, tokens);
+	}
+	(void)eat(tokens);
+
+	std::shared_ptr<daedalus::ast::Statement> parenthesisStatement = daedalus::parser::parse_statement(parser, tokens);
+
+	(void)expect(tokens, "CLOSE_PAREN", std::runtime_error("Expected closed parenthesis"));
+
+	if(std::shared_ptr<daedalus::ast::Expression> parenthesisExpression = std::dynamic_pointer_cast<daedalus::ast::Expression>(parenthesisStatement)) {
+		return parenthesisExpression;
+	}
+	
+	throw std::runtime_error("Invalid parenthesis expression");
+}
+
 std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 
 	std::string operator_symbol = "";
@@ -63,7 +80,7 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression
 		)
 	} else if(peek(tokens).value == "-") {
 		(void)eat(tokens);
-		std::shared_ptr<daedalus::ast::Expression> term = parse_boolean_expression(parser, tokens)->get_constexpr();
+		std::shared_ptr<daedalus::ast::Expression> term = parse_parenthesis_expression(parser, tokens)->get_constexpr();
 		if(term->type() == "Identifier") {
 			return std::make_shared<tlang::ast::BinaryExpression>(
 				std::make_shared<daedalus::ast::NumberExpression>(0),
@@ -81,7 +98,7 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression
 		return numberExpression;
 	}
 	
-	std::shared_ptr<daedalus::ast::Expression> term = tlang::parser::parse_boolean_expression(parser, tokens);
+	std::shared_ptr<daedalus::ast::Expression> term = tlang::parser::parse_parenthesis_expression(parser, tokens);
 
 	return operator_symbol.size() == 0 ? term : std::make_shared<tlang::ast::UnaryExpression>(term, operator_symbol);
 }
@@ -152,10 +169,10 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_binary_expressio
 
 std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 	
-	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_identifier(parser, tokens);
+	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_binary_expression(parser, tokens);
 
 	if(pseudoIdentifier->type() != "Identifier") {
-		return tlang::parser::parse_binary_expression(parser, tokens);
+		return pseudoIdentifier;
 	}
 
 	std::shared_ptr<tlang::ast::Identifier> identifier = std::dynamic_pointer_cast<tlang::ast::Identifier>(pseudoIdentifier);
@@ -297,7 +314,7 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expre
 
 std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 
-	if(peek(tokens).type != "ASSIGN_KEYWORD") {
+	if(peek(tokens).type != "DECLARE_KEYWORD") {
 		return parse_assignation_expression(parser, tokens);
 	}
 

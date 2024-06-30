@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 		&setup_interpreter
 	);
 
-	std::string src = "let i: i32 = true";
+	std::string src = "let i: i32 = (12 - (-2 - 1)) * 4";
 	// std::string src = "3 + 100 * .2 / 1 - 2";
 	// std::string src = "(3 + 100 * .2) / (1 - 2)";
 
