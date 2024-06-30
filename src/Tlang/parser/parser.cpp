@@ -37,21 +37,21 @@ void setup_parser(daedalus::parser::Parser& parser) {
 
 std::unordered_map<std::string, std::string> tlang::parser::identifiers = std::unordered_map<std::string, std::string>();
 
-std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_identifier(std::vector<daedalus::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_identifier(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 	if(peek(tokens).type == "IDENTIFIER") {
 		return std::make_shared<tlang::ast::Identifier>(eat(tokens).value);
 	}
-	return daedalus::parser::parse_number_expression(tokens);
+	return daedalus::parser::parse_number_expression(parser, tokens);
 }
 
-std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_boolean_expression(std::vector<daedalus::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_boolean_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 	if(peek(tokens).type == "BOOL") {
 		return std::make_shared<tlang::ast::BooleanExpression>(eat(tokens).value == "true");
 	}
-	return tlang::parser::parse_identifier(tokens);
+	return tlang::parser::parse_identifier(parser, tokens);
 }
 
-std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression(std::vector<daedalus::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 
 	std::string operator_symbol = "";
 
@@ -63,7 +63,7 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression
 		)
 	} else if(peek(tokens).value == "-") {
 		(void)eat(tokens);
-		std::shared_ptr<daedalus::ast::Expression> term = parse_boolean_expression(tokens)->get_constexpr();
+		std::shared_ptr<daedalus::ast::Expression> term = parse_boolean_expression(parser, tokens)->get_constexpr();
 		if(term->type() == "Identifier") {
 			return std::make_shared<tlang::ast::BinaryExpression>(
 				std::make_shared<daedalus::ast::NumberExpression>(0),
@@ -81,20 +81,20 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_unary_expression
 		return numberExpression;
 	}
 	
-	std::shared_ptr<daedalus::ast::Expression> term = tlang::parser::parse_boolean_expression(tokens);
+	std::shared_ptr<daedalus::ast::Expression> term = tlang::parser::parse_boolean_expression(parser, tokens);
 
 	return operator_symbol.size() == 0 ? term : std::make_shared<tlang::ast::UnaryExpression>(term, operator_symbol);
 }
 
-std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_multiplicative_expression(std::vector<daedalus::lexer::Token>& tokens) {
-	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_unary_expression(tokens);
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_multiplicative_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
+	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_unary_expression(parser, tokens);
 
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "*" || peek(tokens).value == "/")
 	) {
 		std::string operator_symbol = eat(tokens).value;
-		std::shared_ptr<daedalus::ast::Expression> right = tlang::parser::parse_multiplicative_expression(tokens);
+		std::shared_ptr<daedalus::ast::Expression> right = tlang::parser::parse_multiplicative_expression(parser, tokens);
 		
 		return std::make_shared<tlang::ast::BinaryExpression>(
 			left,
@@ -106,15 +106,15 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_multiplicative_e
 	return left;
 }
 
-std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_additive_expression(std::vector<daedalus::lexer::Token>& tokens) {
-	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_multiplicative_expression(tokens);
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_additive_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
+	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_multiplicative_expression(parser, tokens);
 
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "+" || peek(tokens).value == "-")
 	) {
 		std::string operator_symbol = eat(tokens).value;
-		std::shared_ptr<daedalus::ast::Expression> right = tlang::parser::parse_additive_expression(tokens);
+		std::shared_ptr<daedalus::ast::Expression> right = tlang::parser::parse_additive_expression(parser, tokens);
 		
 		return std::make_shared<tlang::ast::BinaryExpression>(
 			left,
@@ -126,15 +126,15 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_additive_express
 	return left;
 }
 
-std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_logical_expression(std::vector<daedalus::lexer::Token>& tokens) {
-	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_additive_expression(tokens);
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_logical_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
+	std::shared_ptr<daedalus::ast::Expression> left = tlang::parser::parse_additive_expression(parser, tokens);
 
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "&&" || peek(tokens).value == "||")
 	) {
 		std::string operator_symbol = eat(tokens).value;
-		std::shared_ptr<daedalus::ast::Expression> right = tlang::parser::parse_logical_expression(tokens);
+		std::shared_ptr<daedalus::ast::Expression> right = tlang::parser::parse_logical_expression(parser, tokens);
 		
 		return std::make_shared<tlang::ast::BinaryExpression>(
 			left,
@@ -146,26 +146,26 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_logical_expressi
 	return left;
 }
 
-std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_binary_expression(std::vector<daedalus::lexer::Token>& tokens) {
-	return tlang::parser::parse_logical_expression(tokens);
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_binary_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
+	return tlang::parser::parse_logical_expression(parser, tokens);
 }
 
-std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expression(std::vector<daedalus::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 	
-	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_identifier(tokens);
+	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_identifier(parser, tokens);
 
 	if(pseudoIdentifier->type() != "Identifier") {
-		return tlang::parser::parse_binary_expression(tokens);
+		return tlang::parser::parse_binary_expression(parser, tokens);
 	}
 
 	std::shared_ptr<tlang::ast::Identifier> identifier = std::dynamic_pointer_cast<tlang::ast::Identifier>(pseudoIdentifier);
 
 	if(peek(tokens).type != "ASSIGN") {
-		return tlang::parser::parse_identifier(tokens);
+		return identifier;
 	}
 	(void)eat(tokens);
 
-	std::shared_ptr<daedalus::ast::Expression> expression = tlang::parser::parse_binary_expression(tokens);
+	std::shared_ptr<daedalus::ast::Expression> expression = tlang::parser::parse_binary_expression(parser, tokens);
 
 	if(std::shared_ptr<tlang::ast::ContainerExpression> containerExpression = std::dynamic_pointer_cast<tlang::ast::ContainerExpression>(expression)) {
 		if(std::shared_ptr<tlang::ast::Identifier> source_identifier = std::dynamic_pointer_cast<tlang::ast::ContainerExpression>(expression)->contains_identifier()) {
@@ -295,15 +295,15 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expre
 	return std::make_shared<tlang::ast::AssignationExpression>(identifier, expression);
 }
 
-std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expression(std::vector<daedalus::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 
 	if(peek(tokens).type != "ASSIGN_KEYWORD") {
-		return parse_assignation_expression(tokens);
+		return parse_assignation_expression(parser, tokens);
 	}
 
 	bool isMutable = eat(tokens).value == "let";
 	
-	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_identifier(tokens);
+	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_identifier(parser, tokens);
 
 	DAE_ASSERT_TRUE(
 		pseudoIdentifier->type() == "Identifier",
@@ -318,7 +318,7 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 
 	(void)expect(tokens, "ASSIGN", std::runtime_error("Expected assignment symbol"));
 
-	std::shared_ptr<daedalus::ast::Expression> expression = tlang::parser::parse_binary_expression(tokens)->get_constexpr();
+	std::shared_ptr<daedalus::ast::Expression> expression = tlang::parser::parse_binary_expression(parser, tokens)->get_constexpr();
 
 	if(std::shared_ptr<tlang::ast::ContainerExpression> containerExpression = std::dynamic_pointer_cast<tlang::ast::ContainerExpression>(expression)) {
 		if(std::shared_ptr<tlang::ast::Identifier> source_identifier = std::dynamic_pointer_cast<tlang::ast::ContainerExpression>(expression)->contains_identifier()) {
