@@ -266,7 +266,11 @@ std::shared_ptr<daedalus::ast::Expression> tlang::ast::BinaryExpression::get_con
 		throw std::runtime_error("Invalid operator for BooleanExpression and NumberExpression");
 	}
 
-	if(left->type() == "Identifier" || right->type() == "Identifier") {
+	if(
+		left->type() == "Identifier" || right->type() == "Identifier" ||
+		left->type() == "BinaryExpression" || right->type() == "BinaryExpression" ||
+		left->type() == "UnaryExpression" || right->type() == "UnaryExpression"
+	) {
 		return std::make_shared<tlang::ast::BinaryExpression>(
 			left,
 			this->operator_symbol,
@@ -284,7 +288,7 @@ std::string tlang::ast::BinaryExpression::repr(int indent) {
 		this->right->repr(indent + 1) + "\n" +
 		std::string(indent, '\t') + ")";
 }
-#include <iostream>
+
 std::shared_ptr<tlang::ast::Identifier> tlang::ast::BinaryExpression::left_contains_identifier() {
 
 	std::shared_ptr<daedalus::ast::Expression> constexprLeft = this->left->get_constexpr();
