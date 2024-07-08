@@ -1,21 +1,36 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include <AquIce/daedalus/core.hpp>
 #include <AquIce/Tlang/core.hpp>
 
 int main(int argc, char** argv) {
 
+	DAE_ASSERT_TRUE(
+		argc == 2,
+		std::runtime_error("Invalid number of arguments\nUsage: tlang <filename>: ")
+	)
+
+	std::string filename = argv[1];
+	
+	DAE_ASSERT_TRUE(
+		(&filename)->rfind(".t") != std::string::npos,
+		std::runtime_error("Invalid file format")
+	)
+
+	std::ifstream file = std::ifstream(argv[1]);
+	std::string src = std::string(
+		(std::istreambuf_iterator<char>(file)),
+		std::istreambuf_iterator<char>()
+	);
+
 	daedalus::Daedalus daedalusConfig = daedalus::setup_daedalus(
 		&setup_lexer,
 		&setup_parser,
 		&setup_interpreter
 	);
-
-	std::string src = "let i: i32 = 12 let j: i32 = -i - 3";
-	// std::string src = "3 + 100 * .2 / 1 - 2";
-	// std::string src = "(3 + 100 * .2) / (1 - 2)";
 
 	// * LEXER
 

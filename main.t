@@ -1,0 +1,1 @@
+let i: char = '\g';
