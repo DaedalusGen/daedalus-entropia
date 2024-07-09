@@ -51,9 +51,33 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_boolean_expressi
 	return tlang::parser::parse_identifier(parser, tokens);
 }
 
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_char_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
+	if(peek(tokens).type == "CHAR") {
+		if(peek(tokens).value.at(1) == '\\') {
+			daedalus::lexer::Token token = eat(tokens);
+			switch(token.value.at(2)) {
+				case 'n':
+					return std::make_shared<tlang::ast::CharExpression>('\n');
+				case 't':
+					return std::make_shared<tlang::ast::CharExpression>('\t');
+				case 'r':
+					return std::make_shared<tlang::ast::CharExpression>('\r');
+				case '\'':
+					return std::make_shared<tlang::ast::CharExpression>('\'');
+				case '\\':
+					return std::make_shared<tlang::ast::CharExpression>('\\');
+				default:
+					throw std::runtime_error("Invalid escape sequence (should not have been validated by lexer)");
+			}
+		}
+		return std::make_shared<tlang::ast::CharExpression>(eat(tokens).value.at(1));
+	}
+	return tlang::parser::parse_identifier(parser, tokens);
+}
+
 std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_parenthesis_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 	if(peek(tokens).type != "OPEN_PAREN") {
-		return parse_boolean_expression(parser, tokens);
+		return parse_char_expression(parser, tokens);
 	}
 	(void)eat(tokens);
 

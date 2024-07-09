@@ -19,6 +19,15 @@ std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_boo
 	return std::make_shared<tlang::values::BooleanValue>(booleanExpression->value);
 };
 
+std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_char_expression(
+	daedalus::interpreter::Interpreter& interpreter,
+	std::shared_ptr<daedalus::ast::Statement> statement,
+	std::shared_ptr<daedalus::env::Environment> env
+) {
+	std::shared_ptr<tlang::ast::CharExpression> charExpression = std::dynamic_pointer_cast<tlang::ast::CharExpression>(statement);
+	return std::make_shared<tlang::values::CharValue>(charExpression->value);
+};
+
 std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_unary_expression(
 	daedalus::interpreter::Interpreter& interpreter,
 	std::shared_ptr<daedalus::ast::Statement> statement,
@@ -166,6 +175,10 @@ void setup_interpreter(daedalus::interpreter::Interpreter& interpreter) {
 		{
 			"BooleanExpression",
 			&tlang::interpreter::evaluate_boolean_expression
+		},
+		{
+			"CharExpression",
+			&tlang::interpreter::evaluate_char_expression
 		},
 		{
 			"UnaryExpression",

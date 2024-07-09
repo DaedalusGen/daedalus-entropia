@@ -1,1 +1,1 @@
-let i: char = '\g';
+let i: char = '\t'

@@ -9,6 +9,41 @@
 namespace tlang {
 	namespace ast {
 
+		/**
+		 * TODO
+		 * CharExpression
+		 * StrExpression
+		 * FunctionCallExpression
+		 * FunctionDeclarationExpression
+		 * ConditionnalBlock
+		 * ConditionnalStructure
+		 * MatchStructure
+		 * BreakStatement
+		 * Loop
+		 * ForLoop
+		 * WhileLoop
+		 * TypeDeclaration
+		 * TypeImplementation
+		 */
+
+		// From daedalus core
+		// class Statement;
+		// class Scope;
+		// class Expression;
+		// class NumberExpression;
+
+		class Identifier;
+
+		class AssignationExpression;
+		class DeclarationExpression;
+
+		class BooleanExpression;
+		class CharExpression;
+		
+		class ContainerExpression;
+		class UnaryExpression;
+		class BinaryExpression;
+
 		class Identifier : public daedalus::ast::Expression {
 		public:
 			Identifier(std::string name);
@@ -64,6 +99,17 @@ namespace tlang {
 
 			BooleanExpression(bool value);
 			
+			virtual std::string type() override;
+			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
+			virtual std::string repr(int indent = 0) override;
+		};
+
+		class CharExpression : public daedalus::ast::Expression {
+		public:
+			char value;
+
+			CharExpression(char value);
+
 			virtual std::string type() override;
 			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
 			virtual std::string repr(int indent = 0) override;

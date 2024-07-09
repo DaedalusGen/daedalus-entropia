@@ -104,6 +104,24 @@ std::string tlang::ast::BooleanExpression::repr(int indent) {
 
 #pragma endregion
 
+#pragma region CharExpression
+
+tlang::ast::CharExpression::CharExpression(char value) {
+	this->value = value;
+}
+
+std::string tlang::ast::CharExpression::type() {
+	return "CharExpression";
+}
+std::shared_ptr<daedalus::ast::Expression> tlang::ast::CharExpression::get_constexpr() {
+	return this->shared_from_this();
+}
+std::string tlang::ast::CharExpression::repr(int indent) {
+	return std::string(indent, '\t') + "'" + std::string(1, this->value) + "'";
+}
+
+#pragma endregion
+
 #pragma region ContainerExpression
 
 std::shared_ptr<tlang::ast::Identifier> tlang::ast::ContainerExpression::contains_identifier() {

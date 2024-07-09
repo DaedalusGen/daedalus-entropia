@@ -39,7 +39,7 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 		daedalus::lexer::make_token_type("TYPE", "f64"),
 		
 		daedalus::lexer::make_token_type("TYPE", "bool"),
-
+		daedalus::lexer::make_token_type("TYPE", "char"),
 
 		daedalus::lexer::make_token_type(
 			"NUMBER",
@@ -51,7 +51,7 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 					if(src.at(i) == lexer.decimalSeparator) {
 						DAE_ASSERT_TRUE(
 							isInteger,
-							std::runtime_error("Invalid number format");
+							std::runtime_error("Invalid number format: double decimal separator in \"" + number + src.at(i) + "\"");
 						)
 						isInteger = false;
 					}
@@ -61,6 +61,53 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 					}
 				}
 				return number;
+			}
+		),
+		daedalus::lexer::make_token_type(
+			"CHAR",
+			[lexer](std::string src) -> std::string {
+				std::string chr = "";
+
+				if(src.at(0) == '\'') {
+					chr += src.at(0);
+					if(src.at(1) == '\\') {
+						char c = src.at(2);
+						switch (c) {
+							case 'n':
+								return "'\\n'";
+							case 't':
+								return "'\\t'";
+							case 'r':
+								return "'\\r'";
+							case '\'':
+								return "'\\''";
+							case '\\':
+								return "'\\\'";						
+							default:
+								throw std::runtime_error("Invalid escape character '" + std::string(1, c) + "' in " + chr + "\\" + c + src.at(2));
+						}
+					}
+
+					char c = src.at(1);
+
+					DAE_ASSERT_TRUE(
+						c != '\'',
+						std::runtime_error("Invalid character format: empty character in " + chr + c)
+					)
+
+					chr += c;
+
+					c = src.at(2);
+					
+					DAE_ASSERT_TRUE(
+						c == '\'',
+						std::runtime_error("Invalid character format: expected closing character instead of " + std::string(1, c) + " in " + chr + c)
+					)
+
+					chr += c;
+				}
+				
+				return chr;
 			}
 		),
 		daedalus::lexer::make_token_type(

@@ -22,6 +22,11 @@ namespace tlang {
 			std::shared_ptr<daedalus::ast::Statement> statement,
 			std::shared_ptr<daedalus::env::Environment> env
 		);
+		std::shared_ptr<daedalus::values::RuntimeValue> evaluate_char_expression(
+			daedalus::interpreter::Interpreter& interpreter,
+			std::shared_ptr<daedalus::ast::Statement> statement,
+			std::shared_ptr<daedalus::env::Environment> env
+		);
 		std::shared_ptr<daedalus::values::RuntimeValue> evaluate_unary_expression(
 			daedalus::interpreter::Interpreter& interpreter,
 			std::shared_ptr<daedalus::ast::Statement> statement,
