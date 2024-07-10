@@ -338,11 +338,17 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expre
 
 std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 
-	if(peek(tokens).type != "DECLARE_KEYWORD") {
+	if(peek(tokens).type != "LET") {
 		return parse_assignation_expression(parser, tokens);
 	}
+	(void)eat(tokens);
 
-	bool isMutable = eat(tokens).value == "let";
+	bool isMutable = false;
+	
+	if(peek(tokens).type == "MUT") {
+		isMutable = true;
+		(void)eat(tokens);
+	}
 	
 	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_identifier(parser, tokens);
 

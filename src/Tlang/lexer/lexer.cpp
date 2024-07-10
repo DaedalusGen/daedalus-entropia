@@ -2,8 +2,8 @@
 
 void setup_lexer(daedalus::lexer::Lexer& lexer) {
 	std::vector<daedalus::lexer::TokenType> tokenTypes = std::vector<daedalus::lexer::TokenType>({
-		daedalus::lexer::make_token_type("DECLARE_KEYWORD", "let"),
-		daedalus::lexer::make_token_type("DECLARE_KEYWORD", "const"),
+		daedalus::lexer::make_token_type("LET", "let"),
+		daedalus::lexer::make_token_type("MUT", "mut"),
 
 		daedalus::lexer::make_token_type("SEMICOLON", ";"),
 		
