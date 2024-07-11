@@ -33,3 +33,60 @@ make config=dynamic-build
 ```
 
 This will generate the files `Daedalus-Tlang.dll` and `Daedalus-Tlang.lib` in `build\daedalus-tlang\bin\dynamic-build\`.
+
+# Wiki
+
+## Nodes
+
+### Identifier
+
+Identifiers can be composed of `a-z`, `A-Z` or `_`.
+
+### Declaration Expression
+
+Assignation expressions are immutable by default and follow this pattern:
+
+```
+let myVar: i32 = 12;
+```
+
+> Note
+>
+> Supported types are the following:
+> - Integer types: `i8`, `i16`, `i32`, `i64`
+> 
+> - Unsigned integer types: `u8`, `u16`, `u32`, `u64`
+> 
+> - Float types: `f32`, `f64`
+> 
+> - Boolean type: `bool`
+> 
+> - Character type: `char`
+
+If you want a mutable value, you can use this syntax:
+
+```
+let mut myVar: i32 = 12;
+```
+
+### Unary Expression
+
+Here is the list of all valid unary operators:
+
+| Operator | Type | Effect |
+| - | - | - |
+| `!` | `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64`, `bool`, `char` | Get the inverse of the boolean value of an expression |
+| `-` | `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64` | Make a number negative |
+
+### Binary Expression
+
+Here is the list of all valid binary operators:
+
+| Operator | Types | Effect |
+| - | - | - |
+| `&&` | `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64`, `bool`, `char` | Apply a logical AND to two values |
+| `||` | `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64`, `bool`, `char` | Apply a logical OR to two values |
+| `+` | `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64` | Get the sum of two numbers |
+| `-` | `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64` | Get the difference of two numbers |
+| `*` | `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64` | Get the product of two numbers |
+| `/` | `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, `u64`, `f32`, `f64` | Get the result of the division of two numbers |
