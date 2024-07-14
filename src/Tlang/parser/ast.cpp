@@ -3,7 +3,9 @@
 #pragma region DeclarationExpression
 
 tlang::ast::DeclarationExpression::DeclarationExpression(std::shared_ptr<Identifier> identifier, std::shared_ptr<daedalus::ast::Expression> value, std::string value_type, bool isMutable) :
-	AssignationExpression(identifier, value)
+	AssignationExpression(identifier, value),
+	value_type(value_type),
+	isMutable(isMutable)
 {}
 
 std::string tlang::ast::DeclarationExpression::get_value_type() {
@@ -22,7 +24,7 @@ std::shared_ptr<daedalus::ast::Expression> tlang::ast::DeclarationExpression::ge
 }
 std::string tlang::ast::DeclarationExpression::repr(int indent) {
 	return
-		std::string(indent, '\t') + std::string(this->isMutable ? "let " : "const ") + "\n" +
+		std::string(indent, '\t') + std::string(this->isMutable ? "let mut" : "let ") + "\n" +
 		this->identifier->repr(indent) + "\n" +
 		std::string(indent, '\t') + ": " + this->value_type + "\n" +
 		this->value->repr(indent);

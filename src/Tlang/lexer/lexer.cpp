@@ -1,5 +1,38 @@
 #include <AquIce/Tlang/lexer/lexer.hpp>
 
+std::string parse_character(std::string& src) {
+	std::string chr = "";
+	chr += src.at(0);
+	if(src.at(1) == '\\') {
+		char c = src.at(2);
+		switch(c) {
+			case 'n':
+				return "'\\n";
+			case 't':
+				return "'\\t";
+			case 'r':
+				return "'\\r";
+			case '\'':
+				return "'\\'";
+			case '\\':
+				return "'\\\\";
+			default:
+				throw std::runtime_error("Invalid escape character '" + std::string(1, c) + "' in " + chr + "\\" + c + src.at(3));
+		}
+	}
+
+	char c = src.at(1);
+
+	DAE_ASSERT_TRUE(
+		c != '\'',
+		std::runtime_error("Invalid character format: empty character in " + chr + c)
+	)
+
+	chr += c;
+
+	return chr;
+}
+
 void setup_lexer(daedalus::lexer::Lexer& lexer) {
 	std::vector<daedalus::lexer::TokenType> tokenTypes = std::vector<daedalus::lexer::TokenType>({
 		daedalus::lexer::make_token_type("LET", "let"),
@@ -69,35 +102,12 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 				std::string chr = "";
 
 				if(src.at(0) == '\'') {
-					chr += src.at(0);
-					if(src.at(1) == '\\') {
-						char c = src.at(2);
-						switch (c) {
-							case 'n':
-								return "'\\n'";
-							case 't':
-								return "'\\t'";
-							case 'r':
-								return "'\\r'";
-							case '\'':
-								return "'\\''";
-							case '\\':
-								return "'\\\'";						
-							default:
-								throw std::runtime_error("Invalid escape character '" + std::string(1, c) + "' in " + chr + "\\" + c + src.at(2));
-						}
-					}
 
-					char c = src.at(1);
+					chr += parse_character(src);				
 
-					DAE_ASSERT_TRUE(
-						c != '\'',
-						std::runtime_error("Invalid character format: empty character in " + chr + c)
-					)
+					char c = src.at(chr[1] == '\\' ? 3 : 2);
 
-					chr += c;
-
-					c = src.at(2);
+					std::cout << "SRC " << src << std::endl;
 					
 					DAE_ASSERT_TRUE(
 						c == '\'',

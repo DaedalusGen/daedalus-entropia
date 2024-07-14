@@ -11,8 +11,6 @@ namespace tlang {
 
 		/**
 		 * TODO
-		 * CharExpression
-		 * StrExpression
 		 * FunctionCallExpression
 		 * FunctionDeclarationExpression
 		 * ConditionnalBlock

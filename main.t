@@ -1,3 +1,3 @@
-let mut i: i32 = 12;
+let mut i: char = 'a';
 
-i = 13;
+i = '\t';
