@@ -2,11 +2,9 @@
 
 #pragma region DeclarationExpression
 
-tlang::ast::DeclarationExpression::DeclarationExpression(std::shared_ptr<Identifier> identifier, std::shared_ptr<daedalus::ast::Expression> value, std::string value_type, bool isMutable)
-: AssignationExpression(identifier, value) {
-	this->value_type = value_type;
-	this->isMutable = isMutable;
-}
+tlang::ast::DeclarationExpression::DeclarationExpression(std::shared_ptr<Identifier> identifier, std::shared_ptr<daedalus::ast::Expression> value, std::string value_type, bool isMutable) :
+	AssignationExpression(identifier, value)
+{}
 
 std::string tlang::ast::DeclarationExpression::get_value_type() {
 	return this->value_type;
@@ -37,10 +35,11 @@ std::string tlang::ast::DeclarationExpression::repr(int indent) {
 tlang::ast::AssignationExpression::AssignationExpression(
 	std::shared_ptr<Identifier> identifier,
 	std::shared_ptr<daedalus::ast::Expression> value
-) {
-	this->identifier = identifier;
-	this->value = value;
-}
+) :
+	Expression(),
+	identifier(identifier),
+	value(value)
+{}
 
 std::shared_ptr<tlang::ast::Identifier> tlang::ast::AssignationExpression::get_identifier() {
 	return this->identifier;
@@ -67,9 +66,10 @@ std::string tlang::ast::AssignationExpression::repr(int indent) {
 
 #pragma region Identifier
 
-tlang::ast::Identifier::Identifier(std::string name) {
-	this->name = name;
-}
+tlang::ast::Identifier::Identifier(std::string name) :
+	Expression(),
+	name(name)
+{}
 
 std::string tlang::ast::Identifier::get_name() {
 	return this->name;
@@ -88,9 +88,10 @@ std::string tlang::ast::Identifier::repr(int indent) {
 
 #pragma region BooleanExpression
 
-tlang::ast::BooleanExpression::BooleanExpression(bool value) {
-	this->value = value;
-}
+tlang::ast::BooleanExpression::BooleanExpression(bool value) :
+	Expression(),
+	value(value)
+{}
 
 std::string tlang::ast::BooleanExpression::BooleanExpression::type() {
 	return "BooleanExpression";
@@ -106,9 +107,10 @@ std::string tlang::ast::BooleanExpression::repr(int indent) {
 
 #pragma region CharExpression
 
-tlang::ast::CharExpression::CharExpression(char value) {
-	this->value = value;
-}
+tlang::ast::CharExpression::CharExpression(char value) :
+	Expression(),
+	value(value)
+{}
 
 std::string tlang::ast::CharExpression::type() {
 	return "CharExpression";
@@ -135,10 +137,11 @@ std::shared_ptr<tlang::ast::Identifier> tlang::ast::ContainerExpression::contain
 tlang::ast::UnaryExpression::UnaryExpression(
 	std::shared_ptr<Expression> term,
 	std::string operator_symbol
-) {
-	this->term = term;
-	this->operator_symbol = operator_symbol;
-}
+) :
+	ContainerExpression(),
+	term(term),
+	operator_symbol(operator_symbol)
+{}
 
 std::shared_ptr<daedalus::ast::Expression> tlang::ast::UnaryExpression::get_term() {
 	return this->term;
@@ -191,11 +194,12 @@ tlang::ast::BinaryExpression::BinaryExpression(
 	std::shared_ptr<daedalus::ast::Expression> left,
 	std::string operator_symbol,
 	std::shared_ptr<daedalus::ast::Expression> right
-) {
-	this->left = left;
-	this->operator_symbol = operator_symbol;
-	this->right = right;
-}
+) :
+	ContainerExpression(),
+	left(left),
+	operator_symbol(operator_symbol),
+	right(right)
+{}
 
 std::shared_ptr<daedalus::ast::Expression> tlang::ast::BinaryExpression::get_left() {
 	return this->left;
