@@ -196,6 +196,10 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expre
 	std::shared_ptr<daedalus::ast::Expression> pseudoIdentifier = tlang::parser::parse_binary_expression(parser, tokens);
 
 	if(pseudoIdentifier->type() != "Identifier") {
+		DAE_ASSERT_TRUE(
+			eat(tokens).type == "SEMICOLON",
+			std::runtime_error("Expected semicolon at the end of line")
+		)
 		return pseudoIdentifier;
 	}
 
@@ -332,6 +336,11 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expre
 			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
 		)
 	}
+
+	DAE_ASSERT_TRUE(
+		eat(tokens).type == "SEMICOLON",
+		std::runtime_error("Expected semicolon at the end of line")
+	)
 
 	return std::make_shared<tlang::ast::AssignationExpression>(identifier, expression);
 }
@@ -490,6 +499,11 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
 		)
 	}
+
+	DAE_ASSERT_TRUE(
+		eat(tokens).type == "SEMICOLON",
+		std::runtime_error("Expected semicolon at the end of line")
+	)
 
 	tlang::parser::identifiers[identifier->get_name()] = type;
 	return std::make_shared<tlang::ast::DeclarationExpression>(identifier, expression, type, isMutable);

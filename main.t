@@ -1,3 +1,3 @@
-let mut i: i32 = 12
+let mut i: i32 = 12;
 
-i = 13
+i = 13;
