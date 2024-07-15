@@ -3,6 +3,9 @@
 
 #include <AquIce/daedalus/lexer.hpp>
 
+#include <string>
+#include <stdexcept>
+
 std::string parse_character(std::string src);
 
 void setup_lexer(daedalus::lexer::Lexer& lexer);

@@ -1,7 +1,5 @@
 #include <AquIce/Tlang/interpreter/env.hpp>
 
-#include <iostream>
-
 daedalus::env::EnvValue tlang::env::validate_mutability(daedalus::env::EnvValue env_value, std::shared_ptr<daedalus::values::RuntimeValue> new_value, std::string key) {
 	DAE_ASSERT_TRY(
 		{

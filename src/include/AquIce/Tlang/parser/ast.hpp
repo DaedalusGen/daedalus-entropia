@@ -4,6 +4,8 @@
 #include <AquIce/daedalus/ast.hpp>
 #include <AquIce/daedalus/unit.hpp>
 
+#include <string>
+#include <memory>
 #include <stdexcept>
 
 namespace tlang {
@@ -37,7 +39,7 @@ namespace tlang {
 
 		class BooleanExpression;
 		class CharExpression;
-		
+
 		class ContainerExpression;
 		class UnaryExpression;
 		class BinaryExpression;
@@ -45,7 +47,7 @@ namespace tlang {
 		class Identifier : public daedalus::ast::Expression {
 		public:
 			Identifier(std::string name);
-			
+
 			std::string get_name();
 
 			virtual std::string type() override;
@@ -90,13 +92,13 @@ namespace tlang {
 			std::string value_type;
 			bool isMutable;
 		};
-		
+
 		class BooleanExpression : public daedalus::ast::Expression {
 		public:
 			bool value;
 
 			BooleanExpression(bool value);
-			
+
 			virtual std::string type() override;
 			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
 			virtual std::string repr(int indent = 0) override;
@@ -161,7 +163,7 @@ namespace tlang {
 			std::shared_ptr<Expression> get_left();
 			std::string get_operator_symbol();
 			std::shared_ptr<Expression> get_right();
-			
+
 			virtual std::shared_ptr<tlang::ast::Identifier> contains_identifier() override;
 
 			virtual std::string type() override;

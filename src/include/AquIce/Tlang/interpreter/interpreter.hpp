@@ -1,10 +1,17 @@
 #ifndef __T_INTERPRETER__
 #define __T_INTERPRETER__
 
-#include "../parser/ast.hpp"
-#include "values.hpp"
-#include "env.hpp"
+#include <AquIce/Tlang/parser/ast.hpp>
+#include <AquIce/Tlang/interpreter/values.hpp>
+#include <AquIce/Tlang/interpreter/env.hpp>
+
 #include <AquIce/daedalus/interpreter.hpp>
+
+#include <string>
+#include <vector>
+#include <memory>
+#include <stdexcept>
+#include <unordered_map>
 
 void setup_interpreter(daedalus::interpreter::Interpreter& interpreter);
 

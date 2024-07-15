@@ -3,6 +3,8 @@
 
 #include <AquIce/daedalus/values.hpp>
 
+#include <string>
+
 namespace tlang {
 	namespace values {
 		class BooleanValue : public daedalus::values::RuntimeValue {
@@ -11,7 +13,7 @@ namespace tlang {
 			 * Create a new Boolean Value
 			 */
 			BooleanValue(bool value = false);
-			
+
 			bool get();
 
 			virtual std::string type() override;
@@ -28,7 +30,7 @@ namespace tlang {
 			 * Create a new Char Value
 			 */
 			CharValue(char value = '\0');
-			
+
 			char get();
 
 			virtual std::string type() override;
@@ -45,7 +47,7 @@ namespace tlang {
 			 * Create a new String Value
 			 */
 			StrValue(std::string value = "");
-			
+
 			std::string get();
 
 			virtual std::string type() override;

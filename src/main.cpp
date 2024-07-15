@@ -1,10 +1,14 @@
+#include <AquIce/Tlang/core.hpp>
+
+#include <AquIce/daedalus/core.hpp>
+
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <memory>
 #include <fstream>
-
-#include <AquIce/daedalus/core.hpp>
-#include <AquIce/Tlang/core.hpp>
+#include <stdexcept>
 
 int main(int argc, char** argv) {
 
@@ -14,7 +18,7 @@ int main(int argc, char** argv) {
 	)
 
 	std::string filename = argv[1];
-	
+
 	DAE_ASSERT_TRUE(
 		(&filename)->rfind(".t") != std::string::npos,
 		std::runtime_error("Invalid file format")

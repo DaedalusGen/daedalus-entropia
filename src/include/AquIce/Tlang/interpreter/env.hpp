@@ -3,6 +3,9 @@
 
 #include <AquIce/daedalus/env.hpp>
 
+#include <memory>
+#include <stdexcept>
+
 namespace tlang {
 	namespace env {
 		daedalus::env::EnvValue validate_mutability(daedalus::env::EnvValue env_value, std::shared_ptr<daedalus::values::RuntimeValue> new_value, std::string key);
