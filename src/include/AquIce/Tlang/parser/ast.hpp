@@ -113,6 +113,17 @@ namespace tlang {
 			virtual std::string repr(int indent = 0) override;
 		};
 
+		class StrExpression : public daedalus::ast::Expression {
+		public:
+			std::string value;
+
+			StrExpression(std::string value);
+
+			virtual std::string type() override;
+			virtual std::shared_ptr<daedalus::ast::Expression> get_constexpr() override;
+			virtual std::string repr(int indent = 0) override;
+		};
+
 		class ContainerExpression : public daedalus::ast::Expression {
 		public:
 			virtual std::shared_ptr<tlang::ast::Identifier> contains_identifier();

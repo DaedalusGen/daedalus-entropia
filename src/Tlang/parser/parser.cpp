@@ -14,6 +14,14 @@ void setup_parser(daedalus::parser::Parser& parser) {
 				daedalus::parser::make_node(&tlang::parser::parse_boolean_expression, false)
 			},
 			{
+				"CharExpression",
+				daedalus::parser::make_node(&tlang::parser::parse_char_expression, false)
+			},
+			{
+				"StrExpression",
+				daedalus::parser::make_node(&tlang::parser::parse_str_expression, false)
+			},
+			{
 				"UnaryExpression",
 				daedalus::parser::make_node(&tlang::parser::parse_unary_expression, false)
 			},
@@ -35,6 +43,26 @@ void setup_parser(daedalus::parser::Parser& parser) {
 	daedalus::parser::demoteTopNode(parser, "NumberExpression");
 }
 
+char get_char(std::string src) {
+	if(src.at(0) == '\\') {
+		switch(src.at(1)) {
+			case 'n':
+				return '\n';
+			case 't':
+				return '\t';
+			case 'r':
+				return '\r';
+			case '\'':
+				return '\'';
+			case '\\':
+				return '\\';
+			default:
+				throw std::runtime_error("Invalid escape sequence (should not have been validated by lexer)");
+		}
+	}
+	return src.at(0);
+}
+
 std::unordered_map<std::string, std::string> tlang::parser::identifiers = std::unordered_map<std::string, std::string>();
 
 std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_identifier(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
@@ -53,31 +81,31 @@ std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_boolean_expressi
 
 std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_char_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 	if(peek(tokens).type == "CHAR") {
-		if(peek(tokens).value.at(1) == '\\') {
-			daedalus::lexer::Token token = eat(tokens);
-			switch(token.value.at(2)) {
-				case 'n':
-					return std::make_shared<tlang::ast::CharExpression>('\n');
-				case 't':
-					return std::make_shared<tlang::ast::CharExpression>('\t');
-				case 'r':
-					return std::make_shared<tlang::ast::CharExpression>('\r');
-				case '\'':
-					return std::make_shared<tlang::ast::CharExpression>('\'');
-				case '\\':
-					return std::make_shared<tlang::ast::CharExpression>('\\');
-				default:
-					throw std::runtime_error("Invalid escape sequence (should not have been validated by lexer)");
-			}
-		}
-		return std::make_shared<tlang::ast::CharExpression>(eat(tokens).value.at(1));
+		std::string value = eat(tokens).value;
+		return std::make_shared<tlang::ast::CharExpression>(get_char(value.substr(1, value.length() - 2)));
 	}
 	return tlang::parser::parse_identifier(parser, tokens);
 }
 
+std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_str_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
+	if(peek(tokens).type == "STR") {
+		std::string str = "";
+		size_t i = 0;
+		std::string value = eat(tokens).value;
+		value = value.substr(1, value.length() - 2);
+		while(i < value.length()) {
+			char c = get_char(value.substr(i));
+			i += value.at(i) == '\\' ? 2 : 1;
+			str += c;
+		}
+		return std::make_shared<tlang::ast::StrExpression>(str);
+	}
+	return tlang::parser::parse_char_expression(parser, tokens);
+}
+
 std::shared_ptr<daedalus::ast::Expression> tlang::parser::parse_parenthesis_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens) {
 	if(peek(tokens).type != "OPEN_PAREN") {
-		return parse_char_expression(parser, tokens);
+		return parse_str_expression(parser, tokens);
 	}
 	(void)eat(tokens);
 
@@ -336,6 +364,18 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_assignation_expre
 			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
 		)
 	}
+	else if(type == "char") {
+		DAE_ASSERT_TRUE(
+			expression->type() == "CharExpression",
+			std::runtime_error("Expected valid char value, got " + expression->repr())
+		)
+	}
+	else if(type == "str") {
+		DAE_ASSERT_TRUE(
+			expression->type() == "StrExpression",
+			std::runtime_error("Expected valid string value, got " + expression->repr())
+		)
+	}
 
 	DAE_ASSERT_TRUE(
 		eat(tokens).type == "SEMICOLON",
@@ -497,6 +537,18 @@ std::shared_ptr<daedalus::ast::Statement> tlang::parser::parse_declaration_expre
 		DAE_ASSERT_TRUE(
 			expression->type() == "BooleanExpression",
 			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
+		)
+	}
+	else if(type == "char") {
+		DAE_ASSERT_TRUE(
+			expression->type() == "CharExpression",
+			std::runtime_error("Expected valid char value, got " + expression->repr())
+		)
+	}
+	else if(type == "str") {
+		DAE_ASSERT_TRUE(
+			expression->type() == "StrExpression",
+			std::runtime_error("Expected valid string value, got " + expression->repr())
 		)
 	}
 

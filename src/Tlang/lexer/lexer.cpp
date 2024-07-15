@@ -1,34 +1,29 @@
 #include <AquIce/Tlang/lexer/lexer.hpp>
 
-std::string parse_character(std::string& src) {
+std::string parse_character(std::string src) {
 	std::string chr = "";
-	chr += src.at(0);
-	if(src.at(1) == '\\') {
-		char c = src.at(2);
+
+	if(src.at(0) == '\\') {
+		char c = src.at(1);
 		switch(c) {
 			case 'n':
-				return "'\\n";
+				return "\\n";
 			case 't':
-				return "'\\t";
+				return "\\t";
 			case 'r':
-				return "'\\r";
+				return "\\r";
 			case '\'':
-				return "'\\'";
+				return "\\'";
 			case '\\':
-				return "'\\\\";
+				return "\\\\";
+			case '"':
+				return "\\\"";
 			default:
-				throw std::runtime_error("Invalid escape character '" + std::string(1, c) + "' in " + chr + "\\" + c + src.at(3));
+				throw std::runtime_error("Invalid escape character '" + std::string(1, c) + "' in " + chr + "\\" + c + src.at(2));
 		}
 	}
 
-	char c = src.at(1);
-
-	DAE_ASSERT_TRUE(
-		c != '\'',
-		std::runtime_error("Invalid character format: empty character in " + chr + c)
-	)
-
-	chr += c;
+	chr += src.at(0);
 
 	return chr;
 }
@@ -73,6 +68,7 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 		
 		daedalus::lexer::make_token_type("TYPE", "bool"),
 		daedalus::lexer::make_token_type("TYPE", "char"),
+		daedalus::lexer::make_token_type("TYPE", "str"),
 
 		daedalus::lexer::make_token_type(
 			"NUMBER",
@@ -101,23 +97,54 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 			[lexer](std::string src) -> std::string {
 				std::string chr = "";
 
-				if(src.at(0) == '\'') {
+				size_t index = 0;
 
-					chr += parse_character(src);				
+				if(src.at(index) == '\'') {
 
-					char c = src.at(chr[1] == '\\' ? 3 : 2);
+					chr += src.at(index);
+					index++;
 
-					std::cout << "SRC " << src << std::endl;
+					std::string parsed_character = parse_character(src.substr(index));
+
+					DAE_ASSERT_TRUE(
+						parsed_character.at(0) != '\'',
+						std::runtime_error("Invalid character format: empty character in " + parsed_character)
+					)
+
+					chr += parsed_character;
+					index += parsed_character.length();
+
+					char c = src.at(index);
+					chr += c;
 					
 					DAE_ASSERT_TRUE(
 						c == '\'',
 						std::runtime_error("Invalid character format: expected closing character instead of " + std::string(1, c) + " in " + chr + c)
 					)
-
-					chr += c;
 				}
 				
 				return chr;
+			}
+		),
+		daedalus::lexer::make_token_type(
+			"STR",
+			[lexer](std::string src) -> std::string {
+				std::string str = "";
+				
+				if(peek(src) == '"') {
+					str += peek(src);
+					size_t i = 1;
+
+					while(src.at(i) != '"') {
+						std::string parsed_character = parse_character(src.substr(i));
+						i += parsed_character.length();
+						str += parsed_character;
+					}
+					
+					str += '"';
+				}
+
+				return str;
 			}
 		),
 		daedalus::lexer::make_token_type(

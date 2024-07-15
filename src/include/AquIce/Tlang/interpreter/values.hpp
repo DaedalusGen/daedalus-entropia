@@ -5,7 +5,7 @@
 
 namespace tlang {
 	namespace values {
-		class BooleanValue: public daedalus::values::RuntimeValue {
+		class BooleanValue : public daedalus::values::RuntimeValue {
 		public:
 			/**
 			 * Create a new Boolean Value
@@ -22,7 +22,7 @@ namespace tlang {
 			bool value;
 		};
 
-		class CharValue: public daedalus::values::RuntimeValue {
+		class CharValue : public daedalus::values::RuntimeValue {
 		public:
 			/**
 			 * Create a new Char Value
@@ -37,6 +37,23 @@ namespace tlang {
 
 		private:
 			char value;
+		};
+
+		class StrValue : public daedalus::values::RuntimeValue {
+		public:
+			/**
+			 * Create a new String Value
+			 */
+			StrValue(std::string value = "");
+			
+			std::string get();
+
+			virtual std::string type() override;
+			virtual std::string repr() override;
+			virtual bool IsTrue() override;
+
+		private:
+			std::string value;
 		};
 	}
 }

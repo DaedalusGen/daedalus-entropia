@@ -126,6 +126,23 @@ std::string tlang::ast::CharExpression::repr(int indent) {
 
 #pragma endregion
 
+#pragma region StrExpression
+
+tlang::ast::StrExpression::StrExpression(std::string value) :
+	Expression(),
+	value(value)
+{}
+
+std::string tlang::ast::StrExpression::type() {
+	return "StrExpression";
+}
+std::shared_ptr<daedalus::ast::Expression> tlang::ast::StrExpression::get_constexpr() {
+	return this->shared_from_this();
+}
+std::string tlang::ast::StrExpression::repr(int indent) {
+	return std::string(indent, '\t') + "\"" + this->value + "\"";
+}
+
 #pragma region ContainerExpression
 
 std::shared_ptr<tlang::ast::Identifier> tlang::ast::ContainerExpression::contains_identifier() {

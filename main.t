@@ -1,3 +1,5 @@
-let mut i: char = 'a';
+let mut i: str = "abcdef\nghijkl\nmnopqr\nstuvwx\tyz\n";
 
-i = '\t';
+let mut c: char = 'a';
+
+c = '\t';

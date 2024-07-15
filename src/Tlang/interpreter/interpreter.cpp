@@ -28,6 +28,15 @@ std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_cha
 	return std::make_shared<tlang::values::CharValue>(charExpression->value);
 };
 
+std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_str_expression(
+	daedalus::interpreter::Interpreter& interpreter,
+	std::shared_ptr<daedalus::ast::Statement> statement,
+	std::shared_ptr<daedalus::env::Environment> env
+) {
+	std::shared_ptr<tlang::ast::StrExpression> strExpression = std::dynamic_pointer_cast<tlang::ast::StrExpression>(statement);
+	return std::make_shared<tlang::values::StrValue>(strExpression->value);
+};
+
 std::shared_ptr<daedalus::values::RuntimeValue> tlang::interpreter::evaluate_unary_expression(
 	daedalus::interpreter::Interpreter& interpreter,
 	std::shared_ptr<daedalus::ast::Statement> statement,
@@ -179,6 +188,10 @@ void setup_interpreter(daedalus::interpreter::Interpreter& interpreter) {
 		{
 			"CharExpression",
 			&tlang::interpreter::evaluate_char_expression
+		},
+		{
+			"StrExpression",
+			&tlang::interpreter::evaluate_str_expression
 		},
 		{
 			"UnaryExpression",

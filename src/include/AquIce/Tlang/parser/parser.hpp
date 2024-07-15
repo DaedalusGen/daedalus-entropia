@@ -12,6 +12,8 @@
 
 void setup_parser(daedalus::parser::Parser& parser);
 
+char get_char(std::string src);
+
 namespace tlang {
 	namespace parser {
 		extern std::unordered_map<std::string, std::string> identifiers;
@@ -21,6 +23,8 @@ namespace tlang {
 		std::shared_ptr<daedalus::ast::Expression> parse_boolean_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens);
 
 		std::shared_ptr<daedalus::ast::Expression> parse_char_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens);
+
+		std::shared_ptr<daedalus::ast::Expression> parse_str_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens);
 
 		std::shared_ptr<daedalus::ast::Expression> parse_parenthesis_expression(daedalus::parser::Parser& parser, std::vector<daedalus::lexer::Token>& tokens);
 
