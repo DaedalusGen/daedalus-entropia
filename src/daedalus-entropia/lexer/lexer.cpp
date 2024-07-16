@@ -1,4 +1,4 @@
-#include <AquIce/Tlang/lexer/lexer.hpp>
+#include <daedalus/Entropia/lexer/lexer.hpp>
 
 std::string parse_character(std::string src) {
 	std::string chr = "";
@@ -28,49 +28,49 @@ std::string parse_character(std::string src) {
 	return chr;
 }
 
-void setup_lexer(daedalus::lexer::Lexer& lexer) {
-	std::vector<daedalus::lexer::TokenType> tokenTypes = std::vector<daedalus::lexer::TokenType>({
-		daedalus::lexer::make_token_type("LET", "let"),
-		daedalus::lexer::make_token_type("MUT", "mut"),
+void setup_lexer(daedalus::core::lexer::Lexer& lexer) {
+	std::vector<daedalus::core::lexer::TokenType> tokenTypes = std::vector<daedalus::core::lexer::TokenType>({
+		daedalus::core::lexer::make_token_type("LET", "let"),
+		daedalus::core::lexer::make_token_type("MUT", "mut"),
 
-		daedalus::lexer::make_token_type("SEMICOLON", ";"),
-		
-		daedalus::lexer::make_token_type("COLON", ":"),
-		
-		daedalus::lexer::make_token_type("ASSIGN", "="),
+		daedalus::core::lexer::make_token_type("SEMICOLON", ";"),
 
-		daedalus::lexer::make_token_type("OPEN_PAREN", "("),
-		daedalus::lexer::make_token_type("CLOSE_PAREN", ")"),
+		daedalus::core::lexer::make_token_type("COLON", ":"),
 
-		daedalus::lexer::make_token_type("BINARY_OPERATOR", "+"),
-		daedalus::lexer::make_token_type("BINARY_OPERATOR", "-"),
-		daedalus::lexer::make_token_type("BINARY_OPERATOR", "*"),
-		daedalus::lexer::make_token_type("BINARY_OPERATOR", "/"),
+		daedalus::core::lexer::make_token_type("ASSIGN", "="),
 
-		daedalus::lexer::make_token_type("BINARY_OPERATOR", "&&"),
-		daedalus::lexer::make_token_type("BINARY_OPERATOR", "||"),
+		daedalus::core::lexer::make_token_type("OPEN_PAREN", "("),
+		daedalus::core::lexer::make_token_type("CLOSE_PAREN", ")"),
 
-		daedalus::lexer::make_token_type("UNARY_OPERATOR", "!"),
-		
-		daedalus::lexer::make_token_type("BOOL", "true"),
-		daedalus::lexer::make_token_type("BOOL", "false"),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "+"),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "-"),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "*"),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "/"),
 
-		daedalus::lexer::make_token_type("TYPE", "i8"),
-		daedalus::lexer::make_token_type("TYPE", "i16"),
-		daedalus::lexer::make_token_type("TYPE", "i32"),
-		daedalus::lexer::make_token_type("TYPE", "i64"),
-		daedalus::lexer::make_token_type("TYPE", "u8"),
-		daedalus::lexer::make_token_type("TYPE", "u16"),
-		daedalus::lexer::make_token_type("TYPE", "u32"),
-		daedalus::lexer::make_token_type("TYPE", "u64"),
-		daedalus::lexer::make_token_type("TYPE", "f32"),
-		daedalus::lexer::make_token_type("TYPE", "f64"),
-		
-		daedalus::lexer::make_token_type("TYPE", "bool"),
-		daedalus::lexer::make_token_type("TYPE", "char"),
-		daedalus::lexer::make_token_type("TYPE", "str"),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "&&"),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "||"),
 
-		daedalus::lexer::make_token_type(
+		daedalus::core::lexer::make_token_type("UNARY_OPERATOR", "!"),
+
+		daedalus::core::lexer::make_token_type("BOOL", "true"),
+		daedalus::core::lexer::make_token_type("BOOL", "false"),
+
+		daedalus::core::lexer::make_token_type("TYPE", "i8"),
+		daedalus::core::lexer::make_token_type("TYPE", "i16"),
+		daedalus::core::lexer::make_token_type("TYPE", "i32"),
+		daedalus::core::lexer::make_token_type("TYPE", "i64"),
+		daedalus::core::lexer::make_token_type("TYPE", "u8"),
+		daedalus::core::lexer::make_token_type("TYPE", "u16"),
+		daedalus::core::lexer::make_token_type("TYPE", "u32"),
+		daedalus::core::lexer::make_token_type("TYPE", "u64"),
+		daedalus::core::lexer::make_token_type("TYPE", "f32"),
+		daedalus::core::lexer::make_token_type("TYPE", "f64"),
+
+		daedalus::core::lexer::make_token_type("TYPE", "bool"),
+		daedalus::core::lexer::make_token_type("TYPE", "char"),
+		daedalus::core::lexer::make_token_type("TYPE", "str"),
+
+		daedalus::core::lexer::make_token_type(
 			"NUMBER",
 			[lexer](std::string src) -> std::string {
 				std::string number = "";
@@ -92,7 +92,7 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 				return number;
 			}
 		),
-		daedalus::lexer::make_token_type(
+		daedalus::core::lexer::make_token_type(
 			"CHAR",
 			[lexer](std::string src) -> std::string {
 				std::string chr = "";
@@ -116,21 +116,21 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 
 					char c = src.at(index);
 					chr += c;
-					
+
 					DAE_ASSERT_TRUE(
 						c == '\'',
 						std::runtime_error("Invalid character format: expected closing character instead of " + std::string(1, c) + " in " + chr + c)
 					)
 				}
-				
+
 				return chr;
 			}
 		),
-		daedalus::lexer::make_token_type(
+		daedalus::core::lexer::make_token_type(
 			"STR",
 			[lexer](std::string src) -> std::string {
 				std::string str = "";
-				
+
 				if(peek(src) == '"') {
 					str += peek(src);
 					size_t i = 1;
@@ -140,14 +140,14 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 						i += parsed_character.length();
 						str += parsed_character;
 					}
-					
+
 					str += '"';
 				}
 
 				return str;
 			}
 		),
-		daedalus::lexer::make_token_type(
+		daedalus::core::lexer::make_token_type(
 			"IDENTIFIER",
 			[lexer](std::string src) -> std::string {
 				std::string identifier = "";
@@ -163,7 +163,7 @@ void setup_lexer(daedalus::lexer::Lexer& lexer) {
 		)
 	});
 
-	daedalus::lexer::setup_lexer(
+	daedalus::core::lexer::setup_lexer(
 		lexer,
 		tokenTypes
 	);

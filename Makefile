@@ -10,21 +10,21 @@ endif
 
 ifeq ($(config),run)
   Daedalus_Core_config = run
-  Daedalus_Tlang_config = run
+  Daedalus_Entropia_config = run
 
 else ifeq ($(config),static-build)
   Daedalus_Core_config = static-build
-  Daedalus_Tlang_config = static-build
+  Daedalus_Entropia_config = static-build
 
 else ifeq ($(config),dynamic-build)
   Daedalus_Core_config = dynamic-build
-  Daedalus_Tlang_config = dynamic-build
+  Daedalus_Entropia_config = dynamic-build
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := Daedalus-Core Daedalus-Tlang
+PROJECTS := Daedalus-Core Daedalus-Entropia
 
 .PHONY: all clean help $(PROJECTS) 
 
@@ -36,15 +36,15 @@ ifneq (,$(Daedalus_Core_config))
 	@${MAKE} --no-print-directory -C daedalus-core/src/build/daedalus-core -f Makefile config=$(Daedalus_Core_config)
 endif
 
-Daedalus-Tlang: Daedalus-Core
-ifneq (,$(Daedalus_Tlang_config))
-	@echo "==== Building Daedalus-Tlang ($(Daedalus_Tlang_config)) ===="
-	@${MAKE} --no-print-directory -C build/daedalus-tlang -f Makefile config=$(Daedalus_Tlang_config)
+Daedalus-Entropia: Daedalus-Core
+ifneq (,$(Daedalus_Entropia_config))
+	@echo "==== Building Daedalus-Entropia ($(Daedalus_Entropia_config)) ===="
+	@${MAKE} --no-print-directory -C build/daedalus-entropia -f Makefile config=$(Daedalus_Entropia_config)
 endif
 
 clean:
 	@${MAKE} --no-print-directory -C daedalus-core/src/build/daedalus-core -f Makefile clean
-	@${MAKE} --no-print-directory -C build/daedalus-tlang -f Makefile clean
+	@${MAKE} --no-print-directory -C build/daedalus-entropia -f Makefile clean
 
 help:
 	@echo "Usage: make [config=name] [target]"
@@ -58,6 +58,6 @@ help:
 	@echo "   all (default)"
 	@echo "   clean"
 	@echo "   Daedalus-Core"
-	@echo "   Daedalus-Tlang"
+	@echo "   Daedalus-Entropia"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

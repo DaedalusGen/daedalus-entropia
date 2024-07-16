@@ -1,17 +1,17 @@
 workspace "Daedalus"
 	configurations { "run", "static-build", "dynamic-build" }
-	startproject "Daedalus-Tlang"
+	startproject "Daedalus-Entropia"
 
 include "daedalus-core/src/include-core.lua"
 
-project "Daedalus-Tlang"
+project "Daedalus-Entropia"
 	language "C++"
-	location "build/daedalus-tlang"
+	location "build/daedalus-entropia"
 	entrypoint "main"
 
 	files {
 		"src/main.cpp",
-		"src/Tlang/**/*.cpp",
+		"src/daedalus-entropia/**/*.cpp",
 		"src/include/**/*.hpp",
 	}
 

@@ -1,6 +1,6 @@
-#include <AquIce/Tlang/core.hpp>
+#include <daedalus/Entropia/core.hpp>
 
-#include <AquIce/daedalus/core.hpp>
+#include <daedalus/core/core.hpp>
 
 #include <iostream>
 #include <string>
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 		std::istreambuf_iterator<char>()
 	);
 
-	daedalus::Daedalus daedalusConfig = daedalus::setup_daedalus(
+	daedalus::core::Daedalus daedalusConfig = daedalus::core::setup_daedalus(
 		&setup_lexer,
 		&setup_parser,
 		&setup_interpreter
@@ -38,25 +38,25 @@ int main(int argc, char** argv) {
 
 	// * LEXER
 
-	std::vector<daedalus::lexer::Token> tokens;
+	std::vector<daedalus::core::lexer::Token> tokens;
 
 	std::cout << src << std::endl;
 
-	daedalus::lexer::lex(
+	daedalus::core::lexer::lex(
 		daedalusConfig.lexer,
 		tokens,
 		src
 	);
 
-	for(const daedalus::lexer::Token& token : tokens) {
+	for(const daedalus::core::lexer::Token& token : tokens) {
 		std::cout << repr(token) << "\n\n";
 	}
 
 	// * PARSER
 
-	std::shared_ptr<daedalus::ast::Scope> program = std::make_shared<daedalus::ast::Scope>();
+	std::shared_ptr<daedalus::core::ast::Scope> program = std::make_shared<daedalus::core::ast::Scope>();
 
-	daedalus::parser::parse(
+	daedalus::core::parser::parse(
 		daedalusConfig.parser,
 		program,
 		tokens
@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 
 	std::unordered_map<std::string, std::string> results;
 
-	daedalus::interpreter::interpret(
+	daedalus::core::interpreter::interpret(
 		daedalusConfig.interpreter,
 		results,
 		program
