@@ -1,4 +1,6 @@
+#include "daedalus/core/parser/ast.hpp"
 #include <daedalus/Entropia/parser/ast.hpp>
+#include <memory>
 
 #pragma region DeclarationExpression
 
@@ -355,6 +357,32 @@ std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::Bi
 	}
 
 	return constexprRight->type() == "Identifier" ? std::dynamic_pointer_cast<daedalus::entropia::ast::Identifier>(constexprRight) : nullptr;
+}
+
+#pragma endregion
+
+#pragma region Loop
+
+daedalus::entropia::ast::LoopExpression::LoopExpression(
+    std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body
+) :
+    daedalus::core::ast::Scope(body)
+{}
+
+std::string daedalus::entropia::ast::LoopExpression::type() {
+    return "LoopExpression";
+}
+
+std::string daedalus::entropia::ast::LoopExpression::repr(int indent) {
+    std::string pretty = std::string(indent, '\t') + "loop {\n";
+
+	for(std::shared_ptr<daedalus::core::ast::Expression> expression : this->body) {
+		pretty += expression->repr(indent + 1) + "\n";
+	}
+
+	pretty += "\n" + std::string(indent, '\t') + "}";
+
+	return pretty;
 }
 
 #pragma endregion

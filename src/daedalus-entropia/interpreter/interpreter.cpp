@@ -166,6 +166,23 @@ std::shared_ptr<daedalus::core::values::RuntimeValue> daedalus::entropia::interp
 	);
 }
 
+std::shared_ptr<daedalus::core::values::RuntimeValue> daedalus::entropia::interpreter::evaluate_loop_expression(
+	daedalus::core::interpreter::Interpreter& interpreter,
+	std::shared_ptr<daedalus::core::ast::Statement> statement,
+	std::shared_ptr<daedalus::core::env::Environment> env
+) {
+    std::shared_ptr<daedalus::entropia::ast::LoopExpression> loopExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::LoopExpression>(statement);
+
+    std::shared_ptr<daedalus::core::values::RuntimeValue> last;
+	while(true) {
+	    std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
+        last = daedalus::core::interpreter::evaluate_scope(interpreter, loopExpression, results, nullptr, env);
+        std::cout << last->repr() << std::endl;
+	}
+
+	return last;
+}
+
 void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter) {
 
 	std::unordered_map<std::string, daedalus::core::interpreter::ParseStatementFunction> nodeEvaluationFunctions = std::unordered_map<std::string, daedalus::core::interpreter::ParseStatementFunction>({
@@ -201,6 +218,10 @@ void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter) {
 			"BinaryExpression",
 			&daedalus::entropia::interpreter::evaluate_binary_expression
 		},
+		{
+		    "LoopExpression",
+			&daedalus::entropia::interpreter::evaluate_loop_expression
+		}
 	});
 
 	std::vector<std::string> envValuesProperties = std::vector<std::string>({

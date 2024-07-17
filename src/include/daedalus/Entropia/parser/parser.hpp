@@ -43,9 +43,11 @@ namespace daedalus {
 
     		std::shared_ptr<daedalus::core::ast::Expression> parse_binary_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens);
 
-    		std::shared_ptr<daedalus::core::ast::Statement> parse_assignation_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens);
+    		std::shared_ptr<daedalus::core::ast::Expression> parse_assignation_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens);
 
-    		std::shared_ptr<daedalus::core::ast::Statement> parse_declaration_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens);
+    		std::shared_ptr<daedalus::core::ast::Expression> parse_declaration_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens);
+
+            std::shared_ptr<daedalus::core::ast::Expression> parse_loop_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens);
     	}
     }
 }

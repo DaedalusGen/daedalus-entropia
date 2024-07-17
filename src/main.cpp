@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <fstream>
 #include <stdexcept>
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
 
 	// * INTERPRETER
 
-	std::unordered_map<std::string, std::string> results;
+	std::vector<daedalus::core::interpreter::RuntimeResult> results;
 
 	daedalus::core::interpreter::interpret(
 		daedalusConfig.interpreter,

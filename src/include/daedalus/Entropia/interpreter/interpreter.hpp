@@ -60,6 +60,11 @@ namespace daedalus {
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
+    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_loop_expression(
+    			daedalus::core::interpreter::Interpreter& interpreter,
+    			std::shared_ptr<daedalus::core::ast::Statement> statement,
+    			std::shared_ptr<daedalus::core::env::Environment> env
+    		);
     	}
     }
 }

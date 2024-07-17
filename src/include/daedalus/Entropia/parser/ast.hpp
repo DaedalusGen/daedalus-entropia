@@ -20,7 +20,6 @@ namespace daedalus {
     		 * ConditionnalStructure
     		 * MatchStructure
     		 * BreakStatement
-    		 * Loop
     		 * ForLoop
     		 * WhileLoop
     		 * TypeDeclaration
@@ -180,6 +179,16 @@ namespace daedalus {
     			std::string operator_symbol;
     			std::shared_ptr<Expression> right;
     		};
+
+            class LoopExpression : public daedalus::core::ast::Scope {
+            public:
+                LoopExpression(
+    				std::vector<std::shared_ptr<Expression>> body
+     			);
+
+     			virtual std::string type() override;
+     			virtual std::string repr(int indent = 0) override;
+            };
     	}
     }
 }
