@@ -4,9 +4,10 @@
 #include <daedalus/core/parser/ast.hpp>
 #include <daedalus/core/tools/assert.hpp>
 
-#include <string>
 #include <memory>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace daedalus {
     namespace entropia {
@@ -16,8 +17,6 @@ namespace daedalus {
     		 * TODO
     		 * FunctionCallExpression
     		 * FunctionDeclarationExpression
-    		 * ConditionnalBlock
-    		 * ConditionnalStructure
     		 * MatchStructure
     		 * BreakStatement
     		 * ForLoop
@@ -28,8 +27,8 @@ namespace daedalus {
 
     		// From daedalus core
     		// class Statement;
-    		// class Scope;
     		// class Expression;
+    		// class Scope;
     		// class NumberExpression;
 
     		class Identifier;
@@ -188,6 +187,41 @@ namespace daedalus {
 
      			virtual std::string type() override;
      			virtual std::string repr(int indent = 0) override;
+            };
+
+            class ConditionnalExpression : public daedalus::core::ast::Scope {
+            public:
+                ConditionnalExpression(
+                    std::vector<std::shared_ptr<Expression>> body,
+                    std::shared_ptr<daedalus::core::ast::Expression> condition,
+                    std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> before = nullptr
+                );
+
+                std::shared_ptr<ConditionnalExpression> get_before();
+                std::shared_ptr<daedalus::core::ast::Expression> get_condition();
+
+     			virtual std::string type() override;
+     			virtual std::string repr(int indent = 0) override;
+
+      		private:
+                std::shared_ptr<ConditionnalExpression> before;
+     			std::shared_ptr<daedalus::core::ast::Expression> condition;
+            };
+
+            class ConditionnalStructure : public daedalus::core::ast::Expression {
+            public:
+                ConditionnalStructure(
+                    std::vector<std::shared_ptr<ConditionnalExpression>> expressions
+                );
+
+                std::vector<std::shared_ptr<ConditionnalExpression>> get_expressions();
+
+                virtual std::string type() override;
+     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
+     			virtual std::string repr(int indent = 0) override;
+
+            private:
+                std::vector<std::shared_ptr<ConditionnalExpression>> expressions;
             };
     	}
     }

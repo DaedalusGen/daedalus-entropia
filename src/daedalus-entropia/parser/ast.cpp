@@ -1,6 +1,4 @@
-#include "daedalus/core/parser/ast.hpp"
 #include <daedalus/Entropia/parser/ast.hpp>
-#include <memory>
 
 #pragma region DeclarationExpression
 
@@ -325,11 +323,9 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 }
 std::string daedalus::entropia::ast::BinaryExpression::repr(int indent) {
 	return
-		std::string(indent, '\t') + "(\n" +
-		this->left->repr(indent + 1) + "\n" +
-		std::string(indent + 1, '\t') + this->operator_symbol + "\n" +
-		this->right->repr(indent + 1) + "\n" +
-		std::string(indent, '\t') + ")";
+		this->left->repr(indent) + "\n" +
+		std::string(indent, '\t') + this->operator_symbol + "\n" +
+		this->right->repr(indent);
 }
 
 std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::BinaryExpression::left_contains_identifier() {
@@ -380,9 +376,91 @@ std::string daedalus::entropia::ast::LoopExpression::repr(int indent) {
 		pretty += expression->repr(indent + 1) + "\n";
 	}
 
-	pretty += "\n" + std::string(indent, '\t') + "}";
+	pretty += std::string(indent, '\t') + "}";
 
 	return pretty;
+}
+
+#pragma endregion
+
+#pragma region ConditionnalExpression
+
+daedalus::entropia::ast::ConditionnalExpression::ConditionnalExpression(
+    std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body,
+    std::shared_ptr<daedalus::core::ast::Expression> condition,
+    std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> before
+) :
+    daedalus::core::ast::Scope(body),
+    condition(condition),
+    before(before)
+{}
+
+std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> daedalus::entropia::ast::ConditionnalExpression::get_before() {
+    return this->before;
+}
+
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::ConditionnalExpression::get_condition() {
+    return this->condition;
+}
+
+std::string daedalus::entropia::ast::ConditionnalExpression::type() {
+    return "ConditionnalExpression";
+}
+
+std::string daedalus::entropia::ast::ConditionnalExpression::repr(int indent) {
+    std::string pretty =
+        std::string(indent, '\t') +
+        std::string(this->before == nullptr ?
+            "if (\n" + this->condition->repr(indent + 1) + "\n" + std::string(indent, '\t') + ")":
+            this->condition == nullptr ?
+                "else" :
+                "else if (\n" + this->condition->repr(indent + 1) + "\n" + std::string(indent, '\t') + ")"
+        ) + " {\n";
+
+	for(std::shared_ptr<daedalus::core::ast::Expression> expression : this->body) {
+		pretty += expression->repr(indent + 1) + "\n";
+	}
+
+	pretty += std::string(indent, '\t') + "}";
+
+	return pretty;
+}
+
+#pragma endregion
+
+#pragma region ConditionnalStructure
+
+daedalus::entropia::ast::ConditionnalStructure::ConditionnalStructure(
+    std::vector<std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression>> expressions
+) :
+    expressions(expressions)
+{}
+
+std::vector<std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression>> daedalus::entropia::ast::ConditionnalStructure::get_expressions() {
+    return this->expressions;
+}
+
+std::string daedalus::entropia::ast::ConditionnalStructure::type() {
+    return "ConditionnalStructure";
+}
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::ConditionnalStructure::get_constexpr() {
+    std::vector<std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression>> expressions;
+    for(std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> conditionnalExpression : this->expressions) {
+        expressions.push_back(
+            std::dynamic_pointer_cast<daedalus::entropia::ast::ConditionnalExpression>(
+                conditionnalExpression->get_constexpr()
+            )
+        );
+    }
+    this->expressions = expressions;
+    return this->shared_from_this();
+}
+std::string daedalus::entropia::ast::ConditionnalStructure::repr(int indent) {
+    std::string pretty = "";
+    for(std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> expression : this->expressions) {
+        pretty += expression->repr(indent) + "\n";
+    }
+    return pretty;
 }
 
 #pragma endregion

@@ -1,9 +1,4 @@
-#include "daedalus/core/parser/parser.hpp"
-#include "daedalus/Entropia/parser/ast.hpp"
-#include "daedalus/core/parser/ast.hpp"
 #include <daedalus/Entropia/parser/parser.hpp>
-#include <memory>
-#include <stdexcept>
 
 void setup_parser(daedalus::core::parser::Parser& parser) {
 
@@ -45,6 +40,10 @@ void setup_parser(daedalus::core::parser::Parser& parser) {
 			{
 			    "LoopExpression",
 				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_loop_expression)
+			},
+			{
+			    "ConditionnalStructure",
+				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_conditionnal_structure)
 			}
 		}
 	);
@@ -74,29 +73,29 @@ char get_char(std::string src) {
 
 std::unordered_map<std::string, std::string> daedalus::entropia::parser::identifiers = std::unordered_map<std::string, std::string>();
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_identifier(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_identifier(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
 	if(peek(tokens).type == "IDENTIFIER") {
 		return std::make_shared<daedalus::entropia::ast::Identifier>(eat(tokens).value);
 	}
-	return daedalus::core::parser::parse_number_expression(parser, tokens);
+	return daedalus::core::parser::parse_number_expression(parser, tokens, needsSemicolon);
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_boolean_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_boolean_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
 	if(peek(tokens).type == "BOOL") {
 		return std::make_shared<daedalus::entropia::ast::BooleanExpression>(eat(tokens).value == "true");
 	}
-	return daedalus::entropia::parser::parse_identifier(parser, tokens);
+	return daedalus::entropia::parser::parse_identifier(parser, tokens, needsSemicolon);
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_char_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_char_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
 	if(peek(tokens).type == "CHAR") {
 		std::string value = eat(tokens).value;
 		return std::make_shared<daedalus::entropia::ast::CharExpression>(get_char(value.substr(1, value.length() - 2)));
 	}
-	return daedalus::entropia::parser::parse_identifier(parser, tokens);
+	return daedalus::entropia::parser::parse_identifier(parser, tokens, needsSemicolon);
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_str_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_str_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
 	if(peek(tokens).type == "STR") {
 		std::string str = "";
 		size_t i = 0;
@@ -109,16 +108,16 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 		}
 		return std::make_shared<daedalus::entropia::ast::StrExpression>(str);
 	}
-	return daedalus::entropia::parser::parse_char_expression(parser, tokens);
+	return daedalus::entropia::parser::parse_char_expression(parser, tokens, needsSemicolon);
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_parenthesis_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_parenthesis_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
 	if(peek(tokens).type != "OPEN_PAREN") {
-		return parse_str_expression(parser, tokens);
+		return parse_str_expression(parser, tokens, needsSemicolon);
 	}
 	(void)eat(tokens);
 
-	std::shared_ptr<daedalus::core::ast::Statement> parenthesisStatement = daedalus::core::parser::parse_expression(parser, tokens);
+	std::shared_ptr<daedalus::core::ast::Statement> parenthesisStatement = daedalus::core::parser::parse_expression(parser, tokens, needsSemicolon);
 
 	(void)expect(tokens, "CLOSE_PAREN", std::runtime_error("Expected closed parenthesis"));
 
@@ -129,7 +128,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	throw std::runtime_error("Invalid parenthesis expression");
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_unary_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_unary_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
 
 	std::string operator_symbol = "";
 
@@ -141,7 +140,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 		)
 	} else if(peek(tokens).value == "-") {
 		(void)eat(tokens);
-		std::shared_ptr<daedalus::core::ast::Expression> term = parse_parenthesis_expression(parser, tokens)->get_constexpr();
+		std::shared_ptr<daedalus::core::ast::Expression> term = parse_parenthesis_expression(parser, tokens, needsSemicolon)->get_constexpr();
 		if(term->type() == "Identifier") {
 			return std::make_shared<daedalus::entropia::ast::BinaryExpression>(
 				std::make_shared<daedalus::core::ast::NumberExpression>(0),
@@ -159,20 +158,20 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 		return numberExpression;
 	}
 
-	std::shared_ptr<daedalus::core::ast::Expression> term = daedalus::entropia::parser::parse_parenthesis_expression(parser, tokens);
+	std::shared_ptr<daedalus::core::ast::Expression> term = daedalus::entropia::parser::parse_parenthesis_expression(parser, tokens, needsSemicolon);
 
 	return operator_symbol.size() == 0 ? term : std::make_shared<daedalus::entropia::ast::UnaryExpression>(term, operator_symbol);
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_multiplicative_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
-	std::shared_ptr<daedalus::core::ast::Expression> left = daedalus::entropia::parser::parse_unary_expression(parser, tokens);
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_multiplicative_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
+	std::shared_ptr<daedalus::core::ast::Expression> left = daedalus::entropia::parser::parse_unary_expression(parser, tokens, needsSemicolon);
 
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "*" || peek(tokens).value == "/")
 	) {
 		std::string operator_symbol = eat(tokens).value;
-		std::shared_ptr<daedalus::core::ast::Expression> right = daedalus::entropia::parser::parse_multiplicative_expression(parser, tokens);
+		std::shared_ptr<daedalus::core::ast::Expression> right = daedalus::entropia::parser::parse_multiplicative_expression(parser, tokens, needsSemicolon);
 
 		return std::make_shared<daedalus::entropia::ast::BinaryExpression>(
 			left,
@@ -184,15 +183,15 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	return left;
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_additive_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
-	std::shared_ptr<daedalus::core::ast::Expression> left = daedalus::entropia::parser::parse_multiplicative_expression(parser, tokens);
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_additive_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
+	std::shared_ptr<daedalus::core::ast::Expression> left = daedalus::entropia::parser::parse_multiplicative_expression(parser, tokens, needsSemicolon);
 
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
 		(peek(tokens).value == "+" || peek(tokens).value == "-")
 	) {
 		std::string operator_symbol = eat(tokens).value;
-		std::shared_ptr<daedalus::core::ast::Expression> right = daedalus::entropia::parser::parse_additive_expression(parser, tokens);
+		std::shared_ptr<daedalus::core::ast::Expression> right = daedalus::entropia::parser::parse_additive_expression(parser, tokens, needsSemicolon);
 
 		return std::make_shared<daedalus::entropia::ast::BinaryExpression>(
 			left,
@@ -204,15 +203,20 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	return left;
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_logical_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
-	std::shared_ptr<daedalus::core::ast::Expression> left = daedalus::entropia::parser::parse_additive_expression(parser, tokens);
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_logical_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
+	std::shared_ptr<daedalus::core::ast::Expression> left = daedalus::entropia::parser::parse_additive_expression(parser, tokens, needsSemicolon);
 
 	if(
 		peek(tokens).type == "BINARY_OPERATOR" &&
-		(peek(tokens).value == "&&" || peek(tokens).value == "||")
+		(
+		    peek(tokens).value == "&&" || peek(tokens).value == "||" ||
+		    peek(tokens).value == "==" || peek(tokens).value == "!=" ||
+		    peek(tokens).value == "<=" || peek(tokens).value == ">=" ||
+		    peek(tokens).value == "<" || peek(tokens).value == ">"
+		)
 	) {
 		std::string operator_symbol = eat(tokens).value;
-		std::shared_ptr<daedalus::core::ast::Expression> right = daedalus::entropia::parser::parse_logical_expression(parser, tokens);
+		std::shared_ptr<daedalus::core::ast::Expression> right = daedalus::entropia::parser::parse_logical_expression(parser, tokens, needsSemicolon);
 
 		return std::make_shared<daedalus::entropia::ast::BinaryExpression>(
 			left,
@@ -224,16 +228,18 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	return left;
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_binary_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
-	return daedalus::entropia::parser::parse_logical_expression(parser, tokens);
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_binary_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
+	return daedalus::entropia::parser::parse_logical_expression(parser, tokens, needsSemicolon);
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_assignation_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_assignation_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
 
-	std::shared_ptr<daedalus::core::ast::Expression> pseudoIdentifier = daedalus::entropia::parser::parse_binary_expression(parser, tokens);
+	std::shared_ptr<daedalus::core::ast::Expression> pseudoIdentifier = daedalus::entropia::parser::parse_binary_expression(parser, tokens, needsSemicolon);
 
 	if(pseudoIdentifier->type() != "Identifier") {
-	    (void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+	    if(needsSemicolon) {
+	       (void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+		}
 		return pseudoIdentifier;
 	}
 
@@ -244,12 +250,14 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	(void)eat(tokens);
 
-	std::shared_ptr<daedalus::core::ast::Expression> expression = daedalus::entropia::parser::parse_binary_expression(parser, tokens);
+	std::shared_ptr<daedalus::core::ast::Expression> expression = daedalus::entropia::parser::parse_binary_expression(parser, tokens, needsSemicolon);
 	expression = expression->get_constexpr();
 
 	if(std::shared_ptr<daedalus::entropia::ast::ContainerExpression> containerExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ContainerExpression>(expression)) {
 		if(std::shared_ptr<daedalus::entropia::ast::Identifier> source_identifier = std::dynamic_pointer_cast<daedalus::entropia::ast::ContainerExpression>(expression)->contains_identifier()) {
-			(void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+		    if(needsSemicolon) {
+				(void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+			}
 		    return std::make_shared<daedalus::entropia::ast::AssignationExpression>(identifier, expression);
 		}
 	}
@@ -385,15 +393,17 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 		)
 	}
 
-	(void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+	if(needsSemicolon) {
+	   (void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+	}
 
 	return std::make_shared<daedalus::entropia::ast::AssignationExpression>(identifier, expression);
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_declaration_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_declaration_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
 
 	if(peek(tokens).type != "LET") {
-		return parse_assignation_expression(parser, tokens);
+		return parse_assignation_expression(parser, tokens, needsSemicolon);
 	}
 	(void)eat(tokens);
 
@@ -404,7 +414,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 		(void)eat(tokens);
 	}
 
-	std::shared_ptr<daedalus::core::ast::Expression> pseudoIdentifier = daedalus::entropia::parser::parse_identifier(parser, tokens);
+	std::shared_ptr<daedalus::core::ast::Expression> pseudoIdentifier = daedalus::entropia::parser::parse_identifier(parser, tokens, needsSemicolon);
 
 	DAE_ASSERT_TRUE(
 		pseudoIdentifier->type() == "Identifier",
@@ -419,14 +429,16 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 
 	(void)expect(tokens, "ASSIGN", std::runtime_error("Expected assignment symbol"));
 
-	std::shared_ptr<daedalus::core::ast::Expression> expression = daedalus::entropia::parser::parse_binary_expression(parser, tokens)->get_constexpr();
+	std::shared_ptr<daedalus::core::ast::Expression> expression = daedalus::entropia::parser::parse_binary_expression(parser, tokens, needsSemicolon)->get_constexpr();
 	expression = expression->get_constexpr();
 
 	daedalus::entropia::parser::identifiers[identifier->get_name()] = type;
 
 	if(std::shared_ptr<daedalus::entropia::ast::ContainerExpression> containerExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ContainerExpression>(expression)) {
 		if(std::shared_ptr<daedalus::entropia::ast::Identifier> source_identifier = std::dynamic_pointer_cast<daedalus::entropia::ast::ContainerExpression>(expression)->contains_identifier()) {
-		    (void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+		    if(needsSemicolon) {
+				(void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+			}
 			return std::make_shared<daedalus::entropia::ast::DeclarationExpression>(identifier, expression, type, isMutable);
 		}
 	}
@@ -560,14 +572,16 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 		)
 	}
 
-	(void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+	if(needsSemicolon) {
+	   (void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+	}
 
 	return std::make_shared<daedalus::entropia::ast::DeclarationExpression>(identifier, expression, type, isMutable);
 }
 
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_loop_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens) {
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_loop_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
     if(peek(tokens).type != "LOOP") {
-		return parse_declaration_expression(parser, tokens);
+		return parse_declaration_expression(parser, tokens, needsSemicolon);
 	}
 	(void)eat(tokens);
 
@@ -577,11 +591,80 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 
 	// TODO Add max iteration to prevent unclosed loop
 	while(peek(tokens).type != "CLOSE_BRACE") {
-	   body.push_back(daedalus::core::parser::parse_expression(parser, tokens));
+	   body.push_back(daedalus::core::parser::parse_expression(parser, tokens, true));
 	}
 	(void)eat(tokens);
 
 	return std::make_shared<daedalus::entropia::ast::LoopExpression>(
 	    body
 	);
+}
+
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_conditionnal_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> before) {
+
+    if(peek(tokens).type == "ELSE") {
+        DAE_ASSERT_TRUE(
+            before != nullptr,
+            std::runtime_error("else statement needs an if statement before itself")
+        )
+        (void)eat(tokens);
+    } else {
+        before = nullptr;
+    }
+
+    std::shared_ptr<daedalus::core::ast::Expression> condition = nullptr;
+    if(peek(tokens).type == "IF") {
+        (void)eat(tokens);
+        (void)expect(tokens, "OPEN_PAREN", std::runtime_error("Expected open parentesis before if condition"));
+        condition = daedalus::core::parser::parse_expression(parser, tokens, false);
+        (void)expect(tokens, "CLOSE_PAREN", std::runtime_error("Expected close parentesis after if condition"));
+    }
+
+    (void)expect(tokens, "OPEN_BRACE", std::runtime_error("Expected open brace before conditionnal body"));
+
+    std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body = std::vector<std::shared_ptr<daedalus::core::ast::Expression>>();
+
+    // TODO Add max iteration to prevent unclosed body
+    while(peek(tokens).type != "CLOSE_BRACE") {
+        body.push_back(daedalus::core::parser::parse_expression(parser, tokens, true));
+	}
+
+	DAE_ASSERT_TRUE(
+	    body.size() > 0,
+		std::runtime_error("Empty if/else block")
+	)
+
+	(void)eat(tokens);
+
+    return std::make_shared<daedalus::entropia::ast::ConditionnalExpression>(
+        body,
+        condition,
+        before
+    );
+}
+
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_conditionnal_structure(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
+    if(peek(tokens).type != "IF" && peek(tokens).type != "ELSE") {
+        return parse_loop_expression(parser, tokens, needsSemicolon);
+    }
+    std::vector<std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression>> expressions = std::vector<std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression>>();
+    std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> before = nullptr;
+    do {
+        expressions.push_back(
+            std::dynamic_pointer_cast<daedalus::entropia::ast::ConditionnalExpression>(parse_conditionnal_expression(parser, tokens, before))
+        );
+        before = expressions.at(expressions.size() - 1);
+        if(before->get_condition() == nullptr) {
+            break;
+        }
+    } while(peek(tokens).type == "IF" || peek(tokens).type == "ELSE");
+
+    DAE_ASSERT_TRUE(
+        expressions.at(expressions.size() - 1)->get_before() != nullptr,
+        std::runtime_error("Else block missing")
+    )
+
+    return std::make_shared<daedalus::entropia::ast::ConditionnalStructure>(
+        expressions
+    );
 }

@@ -1,4 +1,3 @@
-#include "daedalus/core/lexer/lexer.hpp"
 #include <daedalus/Entropia/lexer/lexer.hpp>
 
 std::string parse_character(std::string src) {
@@ -38,8 +37,6 @@ void setup_lexer(daedalus::core::lexer::Lexer& lexer) {
 
 		daedalus::core::lexer::make_token_type("COLON", ":"),
 
-		daedalus::core::lexer::make_token_type("ASSIGN", "="),
-
 		daedalus::core::lexer::make_token_type("OPEN_PAREN", "("),
 		daedalus::core::lexer::make_token_type("CLOSE_PAREN", ")"),
 
@@ -54,9 +51,21 @@ void setup_lexer(daedalus::core::lexer::Lexer& lexer) {
 		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "&&"),
 		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "||"),
 
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "=="),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "!="),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "<="),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", ">="),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", "<"),
+		daedalus::core::lexer::make_token_type("BINARY_OPERATOR", ">"),
+
+		daedalus::core::lexer::make_token_type("ASSIGN", "="),
+
 		daedalus::core::lexer::make_token_type("UNARY_OPERATOR", "!"),
 
 		daedalus::core::lexer::make_token_type("LOOP", "loop"),
+
+		daedalus::core::lexer::make_token_type("IF", "if"),
+		daedalus::core::lexer::make_token_type("ELSE", "else"),
 
 		daedalus::core::lexer::make_token_type("BOOL", "true"),
 		daedalus::core::lexer::make_token_type("BOOL", "false"),

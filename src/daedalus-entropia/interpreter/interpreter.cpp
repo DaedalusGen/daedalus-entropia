@@ -70,7 +70,7 @@ std::shared_ptr<daedalus::core::values::RuntimeValue> daedalus::entropia::interp
 		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue",
-			std::runtime_error("Trying to add invalid operands : " + left->type() + " - " + right->type())
+			std::runtime_error("Trying to add invalid operands : " + left->type() + " + " + right->type())
 		)
 
 		double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
@@ -94,7 +94,7 @@ std::shared_ptr<daedalus::core::values::RuntimeValue> daedalus::entropia::interp
 		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue",
-			std::runtime_error("Trying to multiply invalid invalid operands : " + left->type() + " - " + right->type())
+			std::runtime_error("Trying to multiply invalid invalid operands : " + left->type() + " * " + right->type())
 		)
 
 		double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
@@ -106,7 +106,7 @@ std::shared_ptr<daedalus::core::values::RuntimeValue> daedalus::entropia::interp
 		DAE_ASSERT_TRUE(
 			left->type() == "NumberValue" &&
 			right->type() == "NumberValue",
-			std::runtime_error("Trying to divide invalid invalid operands : " + left->type() + " - " + right->type());
+			std::runtime_error("Trying to divide invalid invalid operands : " + left->type() + " / " + right->type());
 		)
 
 		double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
@@ -118,6 +118,138 @@ std::shared_ptr<daedalus::core::values::RuntimeValue> daedalus::entropia::interp
 		)
 
 		return std::make_shared<daedalus::core::values::NumberValue>(left_nb / right_nb);
+	}
+	if(operator_symbol == "==") {
+        if(
+    		left->type() == "NumberValue" &&
+    		right->type() == "NumberValue"
+		) {
+            double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
+    		double right_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_nb == right_nb);
+		}
+        if(
+    		left->type() == "BooleanValue" &&
+    		right->type() == "BooleanValue"
+		) {
+            bool left_bool = std::dynamic_pointer_cast<daedalus::entropia::values::BooleanValue>(left)->get();
+    		bool right_bool = std::dynamic_pointer_cast<daedalus::entropia::values::BooleanValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_bool == right_bool);
+		}
+		if(
+    		left->type() == "CharValue" &&
+    		right->type() == "CharValue"
+		) {
+            char left_char = std::dynamic_pointer_cast<daedalus::entropia::values::CharValue>(left)->get();
+    		char right_char = std::dynamic_pointer_cast<daedalus::entropia::values::CharValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_char == right_char);
+        }
+        if(
+      		left->type() == "StrValue" &&
+      		right->type() == "StrValue"
+		) {
+            std::string left_str = std::dynamic_pointer_cast<daedalus::entropia::values::StrValue>(left)->get();
+      		std::string right_str = std::dynamic_pointer_cast<daedalus::entropia::values::StrValue>(right)->get();
+
+      		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_str == right_str);
+        }
+
+		throw std::runtime_error("Trying to check equality on invalid invalid operands : " + left->type() + " == " + right->type());
+	}
+	if(operator_symbol == "!=") {
+        if(
+    		left->type() == "NumberValue" &&
+    		right->type() == "NumberValue"
+		) {
+            double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
+    		double right_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_nb != right_nb);
+		}
+        if(
+    		left->type() == "BooleanValue" &&
+    		right->type() == "BooleanValue"
+		) {
+            bool left_bool = std::dynamic_pointer_cast<daedalus::entropia::values::BooleanValue>(left)->get();
+    		bool right_bool = std::dynamic_pointer_cast<daedalus::entropia::values::BooleanValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_bool != right_bool);
+		}
+		if(
+    		left->type() == "CharValue" &&
+    		right->type() == "CharValue"
+		) {
+            char left_char = std::dynamic_pointer_cast<daedalus::entropia::values::CharValue>(left)->get();
+    		char right_char = std::dynamic_pointer_cast<daedalus::entropia::values::CharValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_char != right_char);
+        }
+        if(
+      		left->type() == "StrValue" &&
+      		right->type() == "StrValue"
+		) {
+            std::string left_str = std::dynamic_pointer_cast<daedalus::entropia::values::StrValue>(left)->get();
+      		std::string right_str = std::dynamic_pointer_cast<daedalus::entropia::values::StrValue>(right)->get();
+
+      		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_str != right_str);
+        }
+
+		throw std::runtime_error("Trying to check inequality on invalid invalid operands : " + left->type() + " != " + right->type());
+	}
+	if(operator_symbol == "<") {
+        if(
+    		left->type() == "NumberValue" &&
+    		right->type() == "NumberValue"
+		) {
+            double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
+    		double right_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_nb < right_nb);
+		}
+
+		throw std::runtime_error("Trying to check inferiority on invalid invalid operands : " + left->type() + " < " + right->type());
+	}
+	if(operator_symbol == ">") {
+        if(
+    		left->type() == "NumberValue" &&
+    		right->type() == "NumberValue"
+		) {
+            double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
+    		double right_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_nb > right_nb);
+		}
+
+		throw std::runtime_error("Trying to check superiority on invalid invalid operands : " + left->type() + " != " + right->type());
+	}
+	if(operator_symbol == "<=") {
+        if(
+    		left->type() == "NumberValue" &&
+    		right->type() == "NumberValue"
+		) {
+            double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
+    		double right_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_nb != right_nb);
+		}
+
+		throw std::runtime_error("Trying to check equality/inferiority on invalid invalid operands : " + left->type() + " != " + right->type());
+	}
+	if(operator_symbol == "!=") {
+        if(
+    		left->type() == "NumberValue" &&
+    		right->type() == "NumberValue"
+		) {
+            double left_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(left)->get();
+    		double right_nb = std::dynamic_pointer_cast<daedalus::core::values::NumberValue>(right)->get();
+
+    		return std::make_shared<daedalus::entropia::values::BooleanValue>(left_nb != right_nb);
+		}
+
+		throw std::runtime_error("Trying to check equality/superiority on invalid invalid operands : " + left->type() + " != " + right->type());
 	}
 	if(operator_symbol == "&&") {
 		return std::make_shared<daedalus::entropia::values::BooleanValue>(left->IsTrue() && right->IsTrue());
@@ -183,6 +315,29 @@ std::shared_ptr<daedalus::core::values::RuntimeValue> daedalus::entropia::interp
 	return last;
 }
 
+std::shared_ptr<daedalus::core::values::RuntimeValue> daedalus::entropia::interpreter::evaluate_conditionnal_structure(
+	daedalus::core::interpreter::Interpreter& interpreter,
+	std::shared_ptr<daedalus::core::ast::Statement> statement,
+	std::shared_ptr<daedalus::core::env::Environment> env
+) {
+    std::shared_ptr<daedalus::entropia::ast::ConditionnalStructure> conditionnalExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ConditionnalStructure>(statement);
+
+    for(std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> expression : conditionnalExpression->get_expressions()) {
+        bool isTrue = expression->get_condition() == nullptr;
+        if(!isTrue) {
+            isTrue = daedalus::core::interpreter::evaluate_statement(interpreter, expression->get_condition(), env)->IsTrue();
+        }
+        if(isTrue) {
+            std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
+            std::shared_ptr<daedalus::core::values::RuntimeValue> last = daedalus::core::interpreter::evaluate_scope(interpreter, expression, results, nullptr, env);
+            std::cout << last->repr() << std::endl;
+            return last;
+        }
+	}
+
+	throw std::runtime_error("No condition matched (should not have been parsed");
+}
+
 void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter) {
 
 	std::unordered_map<std::string, daedalus::core::interpreter::ParseStatementFunction> nodeEvaluationFunctions = std::unordered_map<std::string, daedalus::core::interpreter::ParseStatementFunction>({
@@ -221,6 +376,10 @@ void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter) {
 		{
 		    "LoopExpression",
 			&daedalus::entropia::interpreter::evaluate_loop_expression
+		},
+		{
+		    "ConditionnalStructure",
+			&daedalus::entropia::interpreter::evaluate_conditionnal_structure
 		}
 	});
 

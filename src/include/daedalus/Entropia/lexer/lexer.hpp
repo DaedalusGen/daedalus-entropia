@@ -3,8 +3,8 @@
 
 #include <daedalus/core/lexer/lexer.hpp>
 
-#include <string>
 #include <stdexcept>
+#include <string>
 
 std::string parse_character(std::string src);
 

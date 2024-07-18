@@ -7,11 +7,11 @@
 
 #include <daedalus/core/interpreter/interpreter.hpp>
 
-#include <string>
-#include <vector>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter);
 
@@ -61,6 +61,11 @@ namespace daedalus {
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
     		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_loop_expression(
+    			daedalus::core::interpreter::Interpreter& interpreter,
+    			std::shared_ptr<daedalus::core::ast::Statement> statement,
+    			std::shared_ptr<daedalus::core::env::Environment> env
+    		);
+    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_conditionnal_structure(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
