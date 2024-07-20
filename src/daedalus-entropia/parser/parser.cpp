@@ -1,4 +1,3 @@
-#include "daedalus/Entropia/parser/ast.hpp"
 #include <daedalus/Entropia/parser/parser.hpp>
 
 void setup_parser(daedalus::core::parser::Parser& parser) {
@@ -40,11 +39,15 @@ void setup_parser(daedalus::core::parser::Parser& parser) {
 			},
 			{
 			    "LoopExpression",
-				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_loop_expression)
+				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_loop_expression, false)
 			},
 			{
 			    "BreakExpression",
-				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_break_expression)
+				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_break_expression, false)
+			},
+			{
+			    "ContinueExpression",
+				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_continue_expression, false)
 			},
 			{
 			    "ConditionnalStructure",
@@ -618,6 +621,19 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	return std::make_shared<daedalus::entropia::ast::BreakExpression>();
 }
 
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_continue_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
+    if(peek(tokens).type != "CONTINUE") {
+        return parse_break_expression(parser, tokens, needsSemicolon);
+    }
+    (void)eat(tokens);
+
+    if(needsSemicolon) {
+	   (void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+	}
+
+	return std::make_shared<daedalus::entropia::ast::ContinueExpression>();
+}
+
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_conditionnal_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> before) {
 
     if(peek(tokens).type == "ELSE") {
@@ -663,7 +679,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_conditionnal_structure(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
     if(peek(tokens).type != "IF" && peek(tokens).type != "ELSE") {
-        return parse_break_expression(parser, tokens, needsSemicolon);
+        return parse_continue_expression(parser, tokens, needsSemicolon);
     }
     std::vector<std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression>> expressions = std::vector<std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression>>();
     std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> before = nullptr;

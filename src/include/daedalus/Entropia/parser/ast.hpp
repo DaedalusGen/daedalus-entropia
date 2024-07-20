@@ -216,6 +216,15 @@ namespace daedalus {
      			virtual std::string repr(int indent = 0) override;
             };
 
+            class ContinueExpression : public daedalus::core::ast::Expression {
+            public:
+                ContinueExpression();
+
+                virtual std::string type() override;
+     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
+     			virtual std::string repr(int indent = 0) override;
+            };
+
             class ConditionnalStructure : public daedalus::core::ast::Expression {
             public:
                 ConditionnalStructure(

@@ -23,7 +23,8 @@ namespace daedalus {
     	namespace interpreter {
 
             enum class ValueEscapeFlags {
-                BREAK = 1
+                CONTINUE = 1,
+                BREAK = 2
             };
 
     		daedalus::core::interpreter::RuntimeValueWrapper evaluate_identifier(
@@ -72,6 +73,11 @@ namespace daedalus {
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
     		daedalus::core::interpreter::RuntimeValueWrapper evaluate_break_expression(
+    			daedalus::core::interpreter::Interpreter& interpreter,
+    			std::shared_ptr<daedalus::core::ast::Statement> statement,
+    			std::shared_ptr<daedalus::core::env::Environment> env
+    		);
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_continue_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env

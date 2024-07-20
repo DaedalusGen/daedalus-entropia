@@ -380,6 +380,20 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
             );
             break;
         }
+        if(
+            daedalus::core::interpreter::flag_contains(
+                static_cast<daedalus::core::interpreter::Flags>(scope_result.flags),
+                static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::CONTINUE)
+            )
+        ) {
+            scope_result.flags = static_cast<daedalus::core::interpreter::Flags>(
+                daedalus::core::interpreter::flag_remove(
+                    static_cast<daedalus::core::interpreter::Flags>(scope_result.flags),
+                    static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::CONTINUE)
+                )
+            );
+            continue;
+        }
 	}
 
 	return scope_result;
@@ -390,11 +404,21 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-    std::shared_ptr<daedalus::entropia::ast::BreakExpression> breakExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::BreakExpression>(statement);
-
     return daedalus::core::interpreter::wrap(
         std::make_shared<daedalus::core::values::NullValue>(),
         static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::BREAK),
+        true
+    );
+}
+
+daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter::evaluate_continue_expression(
+	daedalus::core::interpreter::Interpreter& interpreter,
+	std::shared_ptr<daedalus::core::ast::Statement> statement,
+	std::shared_ptr<daedalus::core::env::Environment> env
+) {
+    return daedalus::core::interpreter::wrap(
+        std::make_shared<daedalus::core::values::NullValue>(),
+        static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::CONTINUE),
         true
     );
 }
@@ -470,6 +494,10 @@ void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter) {
 		{
 		    "BreakExpression",
 			&daedalus::entropia::interpreter::evaluate_break_expression
+		},
+		{
+		    "ContinueExpression",
+			&daedalus::entropia::interpreter::evaluate_continue_expression
 		},
 		{
 		    "ConditionnalStructure",
