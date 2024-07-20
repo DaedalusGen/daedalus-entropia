@@ -63,6 +63,7 @@ void setup_lexer(daedalus::core::lexer::Lexer& lexer) {
 		daedalus::core::lexer::make_token_type("UNARY_OPERATOR", "!"),
 
 		daedalus::core::lexer::make_token_type("LOOP", "loop"),
+		daedalus::core::lexer::make_token_type("BREAK", "break"),
 
 		daedalus::core::lexer::make_token_type("IF", "if"),
 		daedalus::core::lexer::make_token_type("ELSE", "else"),

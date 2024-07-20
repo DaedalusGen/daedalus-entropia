@@ -1,13 +1,9 @@
-let i: i32 = 0;
-let mut res: str = "";
+let mut i: i32 = 0;
 
-if (i > 1) {
-    res = "> 1";
-} else if (i == 1) {
-    res = "= 1";
-} else {
-    res = "< 1";
+loop {
+    if(i == 10) {
+        "Found 10";
+        break;
+    } else { ""; }
+    i = i + 1;
 }
-
-if(0) {1;}
-else {2;}

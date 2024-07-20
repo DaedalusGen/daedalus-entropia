@@ -18,7 +18,6 @@ namespace daedalus {
     		 * FunctionCallExpression
     		 * FunctionDeclarationExpression
     		 * MatchStructure
-    		 * BreakStatement
     		 * ForLoop
     		 * WhileLoop
     		 * TypeDeclaration
@@ -206,6 +205,15 @@ namespace daedalus {
       		private:
                 std::shared_ptr<ConditionnalExpression> before;
      			std::shared_ptr<daedalus::core::ast::Expression> condition;
+            };
+
+            class BreakExpression : public daedalus::core::ast::Expression {
+            public:
+                BreakExpression();
+
+                virtual std::string type() override;
+     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
+     			virtual std::string repr(int indent = 0) override;
             };
 
             class ConditionnalStructure : public daedalus::core::ast::Expression {

@@ -7,6 +7,7 @@
 
 #include <daedalus/core/interpreter/interpreter.hpp>
 
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -20,52 +21,62 @@ void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter);
 namespace daedalus {
     namespace entropia {
     	namespace interpreter {
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_identifier(
+
+            enum class ValueEscapeFlags {
+                BREAK = 1
+            };
+
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_identifier(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_boolean_expression(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_boolean_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_char_expression(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_char_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_str_expression(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_str_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_unary_expression(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_unary_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_binary_expression(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_binary_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_assignation_expression(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_assignation_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_declaration_expression(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_declaration_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_loop_expression(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_loop_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
-    		std::shared_ptr<daedalus::core::values::RuntimeValue> evaluate_conditionnal_structure(
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_break_expression(
+    			daedalus::core::interpreter::Interpreter& interpreter,
+    			std::shared_ptr<daedalus::core::ast::Statement> statement,
+    			std::shared_ptr<daedalus::core::env::Environment> env
+    		);
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_conditionnal_structure(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env

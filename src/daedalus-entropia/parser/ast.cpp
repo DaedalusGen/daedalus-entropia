@@ -428,6 +428,22 @@ std::string daedalus::entropia::ast::ConditionnalExpression::repr(int indent) {
 
 #pragma endregion
 
+#pragma region BreakExpression
+
+daedalus::entropia::ast::BreakExpression::BreakExpression() {}
+
+std::string daedalus::entropia::ast::BreakExpression::type() {
+    return "BreakExpression";
+}
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::BreakExpression::get_constexpr() {
+    return this->shared_from_this();
+}
+std::string daedalus::entropia::ast::BreakExpression::repr(int indent) {
+    return std::string(indent, '\t') + "break;";
+}
+
+#pragma endregion
+
 #pragma region ConditionnalStructure
 
 daedalus::entropia::ast::ConditionnalStructure::ConditionnalStructure(
