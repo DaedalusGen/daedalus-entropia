@@ -18,7 +18,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 ) {
 	std::shared_ptr<daedalus::entropia::ast::BooleanExpression> booleanExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::BooleanExpression>(statement);
 	return daedalus::core::interpreter::wrap(
-	   std::make_shared<daedalus::entropia::values::BooleanValue>(booleanExpression->value)
+	   std::make_shared<daedalus::entropia::values::BooleanValue>(booleanExpression->get_value())
 	);
 };
 
@@ -29,7 +29,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 ) {
 	std::shared_ptr<daedalus::entropia::ast::CharExpression> charExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::CharExpression>(statement);
 	return daedalus::core::interpreter::wrap(
-	   std::make_shared<daedalus::entropia::values::CharValue>(charExpression->value)
+	   std::make_shared<daedalus::entropia::values::CharValue>(charExpression->get_value())
 	);
 };
 
@@ -40,7 +40,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 ) {
 	std::shared_ptr<daedalus::entropia::ast::StrExpression> strExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::StrExpression>(statement);
 	return daedalus::core::interpreter::wrap(
-	   std::make_shared<daedalus::entropia::values::StrValue>(strExpression->value)
+	   std::make_shared<daedalus::entropia::values::StrValue>(strExpression->get_value())
 	);
 };
 
@@ -465,7 +465,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	);
 
 	daedalus::core::interpreter::evaluate_statement(interpreter, forExpression->get_initial_expression(), for_env);
-    forExpression->body.push_back(forExpression->get_update_expression());
+    forExpression->push_back_body(forExpression->get_update_expression());
 
     daedalus::core::interpreter::RuntimeValueWrapper scope_result;
 

@@ -95,6 +95,15 @@ daedalus::entropia::ast::BooleanExpression::BooleanExpression(bool value) :
 	value(value)
 {}
 
+bool daedalus::entropia::ast::BooleanExpression::BooleanExpression::get_value() {
+    // Needed by UnaryExpression::get_constexpr
+	return this->value;
+}
+
+void daedalus::entropia::ast::BooleanExpression::BooleanExpression::set_value(bool value) {
+    this->value = value;
+}
+
 std::string daedalus::entropia::ast::BooleanExpression::BooleanExpression::type() {
 	return "BooleanExpression";
 }
@@ -114,6 +123,10 @@ daedalus::entropia::ast::CharExpression::CharExpression(char value) :
 	value(value)
 {}
 
+char daedalus::entropia::ast::CharExpression::get_value() {
+	return this->value;
+}
+
 std::string daedalus::entropia::ast::CharExpression::type() {
 	return "CharExpression";
 }
@@ -132,6 +145,10 @@ daedalus::entropia::ast::StrExpression::StrExpression(std::string value) :
 	Expression(),
 	value(value)
 {}
+
+std::string daedalus::entropia::ast::StrExpression::get_value() {
+	return this->value;
+}
 
 std::string daedalus::entropia::ast::StrExpression::type() {
 	return "StrExpression";
@@ -191,7 +208,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::UnaryE
 	this->term = this->term->get_constexpr();
 	if(std::shared_ptr<BooleanExpression> booleanExpression = std::dynamic_pointer_cast<BooleanExpression>(this->term)) {
 		if(this->operator_symbol == "!") {
-			booleanExpression->value = !booleanExpression->value;
+			booleanExpression->set_value(!booleanExpression->get_value());
 			return booleanExpression;
 		}
 	}
@@ -250,26 +267,26 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 		std::shared_ptr<daedalus::core::ast::NumberExpression> leftNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(left);
 		std::shared_ptr<daedalus::core::ast::NumberExpression> rightNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(right);
 		if(this->operator_symbol == "+") {
-			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->value + rightNb->value);
+			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->get_value() + rightNb->get_value());
 		}
 		if(this->operator_symbol == "-") {
-			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->value - rightNb->value);
+			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->get_value() - rightNb->get_value());
 		}
 		if(this->operator_symbol == "*") {
-			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->value * rightNb->value);
+			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->get_value() * rightNb->get_value());
 		}
 		if(this->operator_symbol == "/") {
 			DAE_ASSERT_TRUE(
-				rightNb->value != 0,
+				rightNb->get_value() != 0,
 				std::runtime_error("Trying to divide by zero")
 			)
-			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->value / rightNb->value);
+			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->get_value() / rightNb->get_value());
 		}
 		if(this->operator_symbol == "&&") {
-			return std::make_shared<BooleanExpression>(leftNb->value && rightNb->value);
+			return std::make_shared<BooleanExpression>(leftNb->get_value() && rightNb->get_value());
 		}
 		if(this->operator_symbol == "||") {
-			return std::make_shared<BooleanExpression>(leftNb->value || rightNb->value);
+			return std::make_shared<BooleanExpression>(leftNb->get_value() || rightNb->get_value());
 		}
 		throw std::runtime_error("Invalid operator for NumberExpression and NumberExpression");
 	}
@@ -277,10 +294,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 		std::shared_ptr<BooleanExpression> leftBool = std::dynamic_pointer_cast<BooleanExpression>(left);
 		std::shared_ptr<BooleanExpression> rightBool = std::dynamic_pointer_cast<BooleanExpression>(right);
 		if(this->operator_symbol == "&&") {
-			return std::make_shared<BooleanExpression>(leftBool->value && rightBool->value);
+			return std::make_shared<BooleanExpression>(leftBool->get_value() && rightBool->get_value());
 		}
 		if(this->operator_symbol == "||") {
-			return std::make_shared<BooleanExpression>(leftBool->value || rightBool->value);
+			return std::make_shared<BooleanExpression>(leftBool->get_value() || rightBool->get_value());
 		}
 		throw std::runtime_error("Invalid operator for BooleanExpression and BooleanExpression");
 	}
@@ -288,10 +305,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 		std::shared_ptr<daedalus::core::ast::NumberExpression> leftNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(left);
 		std::shared_ptr<BooleanExpression> rightBool = std::dynamic_pointer_cast<BooleanExpression>(right);
 		if(this->operator_symbol == "&&") {
-			return std::make_shared<BooleanExpression>(leftNb->value && rightBool->value);
+			return std::make_shared<BooleanExpression>(leftNb->get_value() && rightBool->get_value());
 		}
 		if(this->operator_symbol == "||") {
-			return std::make_shared<BooleanExpression>(leftNb->value || rightBool->value);
+			return std::make_shared<BooleanExpression>(leftNb->get_value() || rightBool->get_value());
 		}
 		throw std::runtime_error("Invalid operator for NumberExpression and BooleanExpression");
 	}
@@ -299,10 +316,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 		std::shared_ptr<BooleanExpression> leftBool = std::dynamic_pointer_cast<BooleanExpression>(left);
 		std::shared_ptr<daedalus::core::ast::NumberExpression> rightNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(right);
 		if(this->operator_symbol == "&&") {
-			return std::make_shared<BooleanExpression>(leftBool->value && rightNb->value);
+			return std::make_shared<BooleanExpression>(leftBool->get_value() && rightNb->get_value());
 		}
 		if(this->operator_symbol == "||") {
-			return std::make_shared<BooleanExpression>(leftBool->value || rightNb->value);
+			return std::make_shared<BooleanExpression>(leftBool->get_value() || rightNb->get_value());
 		}
 		throw std::runtime_error("Invalid operator for BooleanExpression and NumberExpression");
 	}

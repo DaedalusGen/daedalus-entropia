@@ -60,7 +60,7 @@ namespace daedalus {
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
     			virtual std::string repr(int indent = 0) override;
 
-    		private:
+    		protected:
     			std::string name;
     		};
 
@@ -94,42 +94,53 @@ namespace daedalus {
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
     			virtual std::string repr(int indent = 0) override;
 
-    		private:
+    		protected:
     			std::string value_type;
     			bool isMutable;
     		};
 
     		class BooleanExpression : public daedalus::core::ast::Expression {
     		public:
-    			bool value;
+     			BooleanExpression(bool value);
 
-    			BooleanExpression(bool value);
+                bool get_value();
+                void set_value(bool value);
 
     			virtual std::string type() override;
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
     			virtual std::string repr(int indent = 0) override;
+
+            protected:
+                bool value;
     		};
 
     		class CharExpression : public daedalus::core::ast::Expression {
     		public:
-    			char value;
-
     			CharExpression(char value);
+
+                char get_value();
 
     			virtual std::string type() override;
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
     			virtual std::string repr(int indent = 0) override;
+
+            protected:
+                char value;
     		};
 
     		class StrExpression : public daedalus::core::ast::Expression {
     		public:
-    			std::string value;
 
     			StrExpression(std::string value);
+
+                std::string get_value();
 
     			virtual std::string type() override;
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
     			virtual std::string repr(int indent = 0) override;
+
+            protected:
+    			std::string value;
     		};
 
     		class ContainerExpression : public daedalus::core::ast::Expression {
@@ -153,7 +164,7 @@ namespace daedalus {
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
     			virtual std::string repr(int indent = 0) override;
 
-    		private:
+    		protected:
     			std::shared_ptr<Expression> term;
     			std::string operator_symbol;
     		};
@@ -176,14 +187,14 @@ namespace daedalus {
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
     			virtual std::string repr(int indent = 0) override;
 
-    		private:
-    			std::shared_ptr<Identifier> left_contains_identifier();
-    			std::shared_ptr<Identifier> right_contains_identifier();
-
-    		private:
+    		protected:
     			std::shared_ptr<Expression> left;
     			std::string operator_symbol;
     			std::shared_ptr<Expression> right;
+
+    		private:
+    			std::shared_ptr<Identifier> left_contains_identifier();
+    			std::shared_ptr<Identifier> right_contains_identifier();
     		};
 
             class LoopExpression : public daedalus::core::ast::Scope {
@@ -264,7 +275,7 @@ namespace daedalus {
      			virtual std::string type() override;
      			virtual std::string repr(int indent = 0) override;
 
-      		private:
+      		protected:
                 std::shared_ptr<ConditionnalExpression> before;
      			std::shared_ptr<daedalus::core::ast::Expression> condition;
             };
@@ -281,7 +292,7 @@ namespace daedalus {
      			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
      			virtual std::string repr(int indent = 0) override;
 
-            private:
+            protected:
                 std::vector<std::shared_ptr<ConditionnalExpression>> expressions;
             };
     	}
