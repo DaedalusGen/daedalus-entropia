@@ -18,7 +18,6 @@ namespace daedalus {
     		 * FunctionCallExpression
     		 * FunctionDeclarationExpression
     		 * MatchStructure
-    		 * WhileLoop
     		 * TypeDeclaration
     		 * TypeImplementation
     		 */

@@ -23,6 +23,9 @@ project "Daedalus-Entropia"
 
 	links { "Daedalus-Core" }
 
+	filter { "action:gmake" }
+        buildoptions { "-Wall", "-Werror", "-Wpedantic" }
+
 	filter { "platforms:run" }
 		kind "ConsoleApp"
 
