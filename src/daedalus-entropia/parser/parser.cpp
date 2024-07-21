@@ -42,6 +42,10 @@ void setup_parser(daedalus::core::parser::Parser& parser) {
 				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_loop_expression, false)
 			},
 			{
+			    "WhileExpression",
+				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_while_expression, false)
+			},
+			{
 			    "BreakExpression",
 				daedalus::core::parser::make_node(&daedalus::entropia::parser::parse_break_expression, false)
 			},
@@ -608,9 +612,36 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	);
 }
 
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_while_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
+    if(peek(tokens).type != "WHILE") {
+		return parse_loop_expression(parser, tokens, needsSemicolon);
+	}
+	(void)eat(tokens);
+
+	(void)expect(tokens, "OPEN_PAREN", std::runtime_error("Expected open parenthesis before while condition"));
+
+	std::shared_ptr<daedalus::core::ast::Expression> condition = daedalus::core::parser::parse_expression(parser, tokens, false);
+
+	(void)expect(tokens, "CLOSE_PAREN", std::runtime_error("Expected close parenthesis after while condition"));
+	(void)expect(tokens, "OPEN_BRACE", std::runtime_error("Expected open brace before while body"));
+
+	std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body = std::vector<std::shared_ptr<daedalus::core::ast::Expression>>();
+
+	// TODO Add max iteration to prevent unclosed loop
+	while(peek(tokens).type != "CLOSE_BRACE") {
+	   body.push_back(daedalus::core::parser::parse_expression(parser, tokens, true));
+	}
+	(void)eat(tokens);
+
+	return std::make_shared<daedalus::entropia::ast::WhileExpression>(
+	    body,
+		condition
+	);
+}
+
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_break_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
     if(peek(tokens).type != "BREAK") {
-        return parse_loop_expression(parser, tokens, needsSemicolon);
+        return parse_while_expression(parser, tokens, needsSemicolon);
     }
     (void)eat(tokens);
 

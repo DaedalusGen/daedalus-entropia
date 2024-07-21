@@ -383,6 +383,72 @@ std::string daedalus::entropia::ast::LoopExpression::repr(int indent) {
 
 #pragma endregion
 
+#pragma region WhileExpression
+
+daedalus::entropia::ast::WhileExpression::WhileExpression(
+    std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body,
+    std::shared_ptr<daedalus::core::ast::Expression> condition
+) :
+    daedalus::entropia::ast::LoopExpression(body),
+    condition(condition)
+{}
+
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::WhileExpression::get_condition() {
+    return this->condition;
+}
+
+std::string daedalus::entropia::ast::WhileExpression::type() {
+    return "WhileExpression";
+}
+
+std::string daedalus::entropia::ast::WhileExpression::repr(int indent) {
+    std::string pretty = std::string(indent, '\t') + "while(\n";
+    pretty += this->condition->repr(indent + 1) + "\n";
+    pretty += std::string(indent, '\t') + ") {\n";
+
+	for(std::shared_ptr<daedalus::core::ast::Expression> expression : this->body) {
+		pretty += expression->repr(indent + 1) + "\n";
+	}
+
+	pretty += std::string(indent, '\t') + "}";
+
+	return pretty;
+}
+
+#pragma endregion
+
+#pragma region BreakExpression
+
+daedalus::entropia::ast::BreakExpression::BreakExpression() {}
+
+std::string daedalus::entropia::ast::BreakExpression::type() {
+    return "BreakExpression";
+}
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::BreakExpression::get_constexpr() {
+    return this->shared_from_this();
+}
+std::string daedalus::entropia::ast::BreakExpression::repr(int indent) {
+    return std::string(indent, '\t') + "break;";
+}
+
+#pragma endregion
+
+#pragma region ContinueExpression
+
+daedalus::entropia::ast::ContinueExpression::ContinueExpression() {}
+
+std::string daedalus::entropia::ast::ContinueExpression::type() {
+    return "ContinueExpression";
+}
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::ContinueExpression::get_constexpr() {
+    return this->shared_from_this();
+}
+std::string daedalus::entropia::ast::ContinueExpression::repr(int indent) {
+    return std::string(indent, '\t') + "continue;";
+}
+
+#pragma endregion
+
 #pragma region ConditionnalExpression
 
 daedalus::entropia::ast::ConditionnalExpression::ConditionnalExpression(
@@ -424,38 +490,6 @@ std::string daedalus::entropia::ast::ConditionnalExpression::repr(int indent) {
 	pretty += std::string(indent, '\t') + "}";
 
 	return pretty;
-}
-
-#pragma endregion
-
-#pragma region BreakExpression
-
-daedalus::entropia::ast::BreakExpression::BreakExpression() {}
-
-std::string daedalus::entropia::ast::BreakExpression::type() {
-    return "BreakExpression";
-}
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::BreakExpression::get_constexpr() {
-    return this->shared_from_this();
-}
-std::string daedalus::entropia::ast::BreakExpression::repr(int indent) {
-    return std::string(indent, '\t') + "break;";
-}
-
-#pragma endregion
-
-#pragma region ContinueExpression
-
-daedalus::entropia::ast::ContinueExpression::ContinueExpression() {}
-
-std::string daedalus::entropia::ast::ContinueExpression::type() {
-    return "ContinueExpression";
-}
-std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::ContinueExpression::get_constexpr() {
-    return this->shared_from_this();
-}
-std::string daedalus::entropia::ast::ContinueExpression::repr(int indent) {
-    return std::string(indent, '\t') + "continue;";
 }
 
 #pragma endregion

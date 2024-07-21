@@ -18,7 +18,6 @@ namespace daedalus {
     		 * FunctionCallExpression
     		 * FunctionDeclarationExpression
     		 * MatchStructure
-    		 * ForLoop
     		 * WhileLoop
     		 * TypeDeclaration
     		 * TypeImplementation
@@ -37,10 +36,20 @@ namespace daedalus {
 
     		class BooleanExpression;
     		class CharExpression;
+			class StrExpression;
 
     		class ContainerExpression;
     		class UnaryExpression;
     		class BinaryExpression;
+
+			class LoopExpression;
+			class WhileExpression;
+
+			class BreakExpression;
+			class ContinueExpression;
+
+			class ConditionnalExpression;
+			class ConditionnalStructure;
 
     		class Identifier : public daedalus::core::ast::Expression {
     		public:
@@ -188,23 +197,20 @@ namespace daedalus {
      			virtual std::string repr(int indent = 0) override;
             };
 
-            class ConditionnalExpression : public daedalus::core::ast::Scope {
+            class WhileExpression : public LoopExpression {
             public:
-                ConditionnalExpression(
+                WhileExpression(
                     std::vector<std::shared_ptr<Expression>> body,
-                    std::shared_ptr<daedalus::core::ast::Expression> condition,
-                    std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> before = nullptr
+                    std::shared_ptr<Expression> condition
                 );
 
-                std::shared_ptr<ConditionnalExpression> get_before();
-                std::shared_ptr<daedalus::core::ast::Expression> get_condition();
+                std::shared_ptr<Expression> get_condition();
 
-     			virtual std::string type() override;
+                virtual std::string type() override;
      			virtual std::string repr(int indent = 0) override;
 
-      		private:
-                std::shared_ptr<ConditionnalExpression> before;
-     			std::shared_ptr<daedalus::core::ast::Expression> condition;
+            protected:
+                std::shared_ptr<Expression> condition;
             };
 
             class BreakExpression : public daedalus::core::ast::Expression {
@@ -223,6 +229,25 @@ namespace daedalus {
                 virtual std::string type() override;
      			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
      			virtual std::string repr(int indent = 0) override;
+            };
+
+            class ConditionnalExpression : public daedalus::core::ast::Scope {
+            public:
+                ConditionnalExpression(
+                    std::vector<std::shared_ptr<Expression>> body,
+                    std::shared_ptr<daedalus::core::ast::Expression> condition,
+                    std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> before = nullptr
+                );
+
+                std::shared_ptr<ConditionnalExpression> get_before();
+                std::shared_ptr<daedalus::core::ast::Expression> get_condition();
+
+     			virtual std::string type() override;
+     			virtual std::string repr(int indent = 0) override;
+
+      		private:
+                std::shared_ptr<ConditionnalExpression> before;
+     			std::shared_ptr<daedalus::core::ast::Expression> condition;
             };
 
             class ConditionnalStructure : public daedalus::core::ast::Expression {

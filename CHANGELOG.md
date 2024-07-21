@@ -1,36 +1,48 @@
 ```sh
-build-entropia.lua
-```
-
-- Updated to allow debug / release configurations
-
-```sh
-README.md
-```
-
-- Updated build documentation
-
-```sh
 main.ent
 ```
 
-- Renamed from `main.t` to `main.ent`
+  - Updated code example to test while loop
 
 ```sh
-src/daedalus-entropia/main.cpp
+src/daedalus-entropia/lexer/lexer.cpp
 ```
 
-- Included `DAE_DEBUG` and `DAE_DEBUG_LOG`
-- Switched file filter from `*.t` to `*.ent`
+	- Added `WHILE` token
 
 ```sh
-scripts/win-run.bat
+src/incude/daedalus/Entropia/parser/ast.hpp
 ```
 
-- Updated to allow arguments (configuration and platform)
+  - Added `WhileExpression` class and its members and methods
 
 ```sh
-scripts/linux-run.sh
+src/daedalus-entropia/parser/ast.cpp
 ```
 
-- Updated to allow arguments (configuration and platform)
+  - Implemented `WhileExpression` class and its methods
+
+```sh
+src/incude/daedalus/Entropia/parser/parser.hpp
+```
+
+  - Added `parse_while_expression` method
+
+```sh
+src/daedalus-entropia/parser/parser.cpp
+```
+
+  - Implemented `parse_while_expression` method and added it to parser config
+
+
+```sh
+src/incude/daedalus/Entropia/interpreter/interpreter.hpp
+```
+
+  - Added `evaluate_while_expression` method
+
+```sh
+src/daedalus-entropia/interpreter/interpreter.cpp
+```
+
+  - Implemented `evaluate_while_expression` method and added it to interpreter config
