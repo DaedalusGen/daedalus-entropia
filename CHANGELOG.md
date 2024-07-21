@@ -1,49 +1,36 @@
 ```sh
-main.t
+build-entropia.lua
 ```
 
-- Updated code to be loop + continue example
+- Updated to allow debug / release configurations
 
 ```sh
-src/daedalus-entropia/lexer/lexer.cpp
+README.md
 ```
 
-- Added `CONTINUE` token
+- Updated build documentation
 
 ```sh
-src/daedalus-entropia/parser/ast.hpp
+main.ent
 ```
 
-- Added `ContinueExpression` class and its members and methods
+- Renamed from `main.t` to `main.ent`
 
 ```sh
-src/daedalus-entropia/parser/ast.cpp
+src/daedalus-entropia/main.cpp
 ```
 
-- Implemented methods for `ContinueExpression` class
+- Included `DAE_DEBUG` and `DAE_DEBUG_LOG`
+- Switched file filter from `*.t` to `*.ent`
 
 ```sh
-src/daedalus-entropia/parser/parser.hpp
+scripts/win-run.bat
 ```
 
-- Added `parse_continue_expression` method
+- Updated to allow arguments (configuration and platform)
 
 ```sh
-src/daedalus-entropia/parser/parser.cpp
+scripts/linux-run.sh
 ```
 
-- Implemented `parse_continue_expression` method and added it to parser config
-
-```sh
-src/daedalus-entropia/interpreter/interpreter.hpp
-```
-
-- Added `CONTINUE` flag to `ValueEscapeFlags` enum
-- Added `evaluate_continue_expression` method
-
-```sh
-src/daedalus-entropia/interpreter/interpreter.cpp
-```
-
-- Implemented `evaluate_continue_expression` method and added it to interpreter config
-- Added support for `CONTINUE` flag to `evaluate_loop_expression` method
+- Updated to allow arguments (configuration and platform)

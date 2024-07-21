@@ -1,5 +1,6 @@
 workspace "Daedalus"
-	configurations { "run", "static-build", "dynamic-build" }
+	configurations { "DEBUG", "RELEASE" }
+	platforms { "run", "static-build", "dynamic-build" }
 	startproject "Daedalus-Entropia"
 
 include "daedalus-core/src/include-core.lua"
@@ -22,13 +23,16 @@ project "Daedalus-Entropia"
 
 	links { "Daedalus-Core" }
 
-	filter { "configurations:run" }
+	filter { "platforms:run" }
 		kind "ConsoleApp"
 
-	filter { "configurations:static-build" }
+	filter { "platforms:static-build" }
 		kind "StaticLib"
 		removefiles { "main.cpp" }
 
-	filter { "configurations:dynamic-build" }
+	filter { "platforms:dynamic-build" }
 		kind "SharedLib"
 		removefiles { "main.cpp" }
+
+	filter { "configurations:debug" }
+	    defines { "DEBUG" }

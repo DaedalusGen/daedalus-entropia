@@ -2,13 +2,11 @@
 
 #include <daedalus/core/core.hpp>
 
-#include <iostream>
+#include <fstream>
+#include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <map>
-#include <memory>
-#include <fstream>
-#include <stdexcept>
 
 int main(int argc, char** argv) {
 
@@ -20,7 +18,7 @@ int main(int argc, char** argv) {
 	std::string filename = argv[1];
 
 	DAE_ASSERT_TRUE(
-		(&filename)->rfind(".t") != std::string::npos,
+		(&filename)->rfind(".ent") != std::string::npos,
 		std::runtime_error("Invalid file format")
 	)
 
@@ -40,7 +38,7 @@ int main(int argc, char** argv) {
 
 	std::vector<daedalus::core::lexer::Token> tokens;
 
-	std::cout << src << std::endl;
+	DAE_DEBUG_LOG(src)
 
 	daedalus::core::lexer::lex(
 		daedalusConfig.lexer,
@@ -48,9 +46,11 @@ int main(int argc, char** argv) {
 		src
 	);
 
-	for(const daedalus::core::lexer::Token& token : tokens) {
-		std::cout << repr(token) << "\n\n";
-	}
+	DAE_DEBUG({
+	    for(const daedalus::core::lexer::Token& token : tokens) {
+			DAE_DEBUG_LOG(repr(token))
+		}
+	})
 
 	// * PARSER
 
@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 		tokens
 	);
 
-	std::cout << "PROGRAM " << program->repr() << std::endl;
+	DAE_DEBUG_LOG("PROGRAM " + program->repr())
 
 	// * INTERPRETER
 
@@ -74,9 +74,11 @@ int main(int argc, char** argv) {
 		program
 	);
 
-	for(const auto& [node, result] : results) {
-		std::cout << node << " -> " << result << std::endl;
-	}
+	DAE_DEBUG({
+    	for(const auto& [node, result] : results) {
+    	    DAE_DEBUG_LOG(node + " -> " + result);
+    	}
+	})
 
 	return 0;
 }
