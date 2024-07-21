@@ -417,6 +417,50 @@ std::string daedalus::entropia::ast::WhileExpression::repr(int indent) {
 
 #pragma endregion
 
+#pragma region ForExpression
+
+daedalus::entropia::ast::ForExpression::ForExpression(
+    std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body,
+    std::shared_ptr<daedalus::core::ast::Expression> initial_expression,
+    std::shared_ptr<daedalus::core::ast::Expression> condition,
+    std::shared_ptr<daedalus::core::ast::Expression> update_expression
+) :
+    daedalus::entropia::ast::WhileExpression(body, condition),
+    initial_expression(initial_expression),
+    update_expression(update_expression)
+{}
+
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::ForExpression::get_initial_expression() {
+    return this->initial_expression;
+}
+
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::ForExpression::get_update_expression() {
+    return this->update_expression;
+}
+
+std::string daedalus::entropia::ast::ForExpression::type() {
+    return "ForExpression";
+}
+
+std::string daedalus::entropia::ast::ForExpression::repr(int indent) {
+    std::string pretty = std::string(indent, '\t') + "for(\n";
+
+    pretty += this->initial_expression->repr(indent + 1) + "\n" + std::string(indent + 1, '\t') + ";\n";
+    pretty += this->condition->repr(indent + 1) + "\n" + std::string(indent + 1, '\t') + ";\n";
+    pretty += this->update_expression->repr(indent + 1) + "\n";
+    pretty += std::string(indent, '\t') + ") {\n";
+
+	for(std::shared_ptr<daedalus::core::ast::Expression> expression : this->body) {
+		pretty += expression->repr(indent + 1) + "\n";
+	}
+
+	pretty += std::string(indent, '\t') + "}";
+
+	return pretty;
+}
+
+#pragma endregion
+
 #pragma region BreakExpression
 
 daedalus::entropia::ast::BreakExpression::BreakExpression() {}

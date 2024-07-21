@@ -213,6 +213,26 @@ namespace daedalus {
                 std::shared_ptr<Expression> condition;
             };
 
+            class ForExpression : public WhileExpression {
+            public:
+                ForExpression(
+                    std::vector<std::shared_ptr<Expression>> body,
+                    std::shared_ptr<Expression> initial_expression,
+                    std::shared_ptr<Expression> condition,
+                    std::shared_ptr<Expression> update_expression
+                );
+
+                std::shared_ptr<Expression> get_initial_expression();
+                std::shared_ptr<Expression> get_update_expression();
+
+                virtual std::string type() override;
+     			virtual std::string repr(int indent = 0) override;
+
+            protected:
+                std::shared_ptr<Expression> initial_expression;
+                std::shared_ptr<Expression> update_expression;
+            };
+
             class BreakExpression : public daedalus::core::ast::Expression {
             public:
                 BreakExpression();

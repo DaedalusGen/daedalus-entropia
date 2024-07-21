@@ -77,6 +77,11 @@ namespace daedalus {
     			std::shared_ptr<daedalus::core::ast::Statement> statement,
     			std::shared_ptr<daedalus::core::env::Environment> env
     		);
+    		daedalus::core::interpreter::RuntimeValueWrapper evaluate_for_expression(
+    			daedalus::core::interpreter::Interpreter& interpreter,
+    			std::shared_ptr<daedalus::core::ast::Statement> statement,
+    			std::shared_ptr<daedalus::core::env::Environment> env
+    		);
     		daedalus::core::interpreter::RuntimeValueWrapper evaluate_break_expression(
     			daedalus::core::interpreter::Interpreter& interpreter,
     			std::shared_ptr<daedalus::core::ast::Statement> statement,

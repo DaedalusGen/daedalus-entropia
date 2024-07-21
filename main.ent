@@ -1,5 +1,5 @@
-let mut i: i32 = 0;
-
-while(i < 10) {
-    i = i + 1;
+for(let mut i: i32 = 0; i < 10; i = i + 1) {
+    i;
 }
+
+let i: i32 = 12;

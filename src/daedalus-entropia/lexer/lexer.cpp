@@ -64,6 +64,8 @@ void setup_lexer(daedalus::core::lexer::Lexer& lexer) {
 
 		daedalus::core::lexer::make_token_type("LOOP", "loop"),
 		daedalus::core::lexer::make_token_type("WHILE", "while"),
+		daedalus::core::lexer::make_token_type("FOR", "for"),
+
 		daedalus::core::lexer::make_token_type("BREAK", "break"),
 		daedalus::core::lexer::make_token_type("CONTINUE", "continue"),
 

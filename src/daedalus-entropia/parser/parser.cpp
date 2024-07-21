@@ -134,7 +134,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	(void)expect(tokens, "CLOSE_PAREN", std::runtime_error("Expected closed parenthesis"));
 
 	if(std::shared_ptr<daedalus::core::ast::Expression> parenthesisExpression = std::dynamic_pointer_cast<daedalus::core::ast::Expression>(parenthesisStatement)) {
-		return parenthesisExpression;
+	   return parenthesisExpression;
 	}
 
 	throw std::runtime_error("Invalid parenthesis expression");
@@ -258,6 +258,9 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	std::shared_ptr<daedalus::entropia::ast::Identifier> identifier = std::dynamic_pointer_cast<daedalus::entropia::ast::Identifier>(pseudoIdentifier);
 
 	if(peek(tokens).type != "ASSIGN") {
+    	if(needsSemicolon) {
+            (void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+        }
 		return identifier;
 	}
 	(void)eat(tokens);
@@ -639,9 +642,44 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	);
 }
 
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_for_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
+    if(peek(tokens).type != "FOR") {
+		return parse_while_expression(parser, tokens, needsSemicolon);
+	}
+	(void)eat(tokens);
+
+	(void)expect(tokens, "OPEN_PAREN", std::runtime_error("Expected open parenthesis before for initial expression"));
+
+	std::shared_ptr<daedalus::core::ast::Expression> initial_expression = daedalus::core::parser::parse_expression(parser, tokens, false);
+	(void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon after for initial expression"));
+
+	std::shared_ptr<daedalus::core::ast::Expression> condition = daedalus::core::parser::parse_expression(parser, tokens, false);
+	(void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon after for condition"));
+
+	std::shared_ptr<daedalus::core::ast::Expression> update_expression = daedalus::core::parser::parse_expression(parser, tokens, false);
+
+	(void)expect(tokens, "CLOSE_PAREN", std::runtime_error("Expected close parenthesis after for update expression"));
+	(void)expect(tokens, "OPEN_BRACE", std::runtime_error("Expected open brace before for body"));
+
+	std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body = std::vector<std::shared_ptr<daedalus::core::ast::Expression>>();
+
+	// TODO Add max iteration to prevent unclosed loop
+	while(peek(tokens).type != "CLOSE_BRACE") {
+	   body.push_back(daedalus::core::parser::parse_expression(parser, tokens, true));
+	}
+	(void)eat(tokens);
+
+	return std::make_shared<daedalus::entropia::ast::ForExpression>(
+	    body,
+		initial_expression,
+		condition,
+		update_expression
+	);
+}
+
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_break_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
     if(peek(tokens).type != "BREAK") {
-        return parse_while_expression(parser, tokens, needsSemicolon);
+        return parse_for_expression(parser, tokens, needsSemicolon);
     }
     (void)eat(tokens);
 

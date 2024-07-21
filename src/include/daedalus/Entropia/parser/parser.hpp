@@ -52,6 +52,8 @@ namespace daedalus {
 
             std::shared_ptr<daedalus::core::ast::Expression> parse_while_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon);
 
+            std::shared_ptr<daedalus::core::ast::Expression> parse_for_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon);
+
             std::shared_ptr<daedalus::core::ast::Expression> parse_break_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon);
 
             std::shared_ptr<daedalus::core::ast::Expression> parse_continue_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon);

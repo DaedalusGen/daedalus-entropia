@@ -1,4 +1,3 @@
-#include "daedalus/Entropia/parser/ast.hpp"
 #include <daedalus/Entropia/interpreter/interpreter.hpp>
 
 daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter::evaluate_identifier(
@@ -452,6 +451,68 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	return scope_result;
 }
 
+daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter::evaluate_for_expression(
+	daedalus::core::interpreter::Interpreter& interpreter,
+	std::shared_ptr<daedalus::core::ast::Statement> statement,
+	std::shared_ptr<daedalus::core::env::Environment> env
+) {
+    std::shared_ptr<daedalus::entropia::ast::ForExpression> forExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ForExpression>(statement);
+
+    std::shared_ptr<daedalus::core::env::Environment> for_env = std::make_shared<daedalus::core::env::Environment>(
+		interpreter.envValuesProperties,
+		interpreter.validationRules,
+		env
+	);
+
+	daedalus::core::interpreter::evaluate_statement(interpreter, forExpression->get_initial_expression(), for_env);
+    forExpression->body.push_back(forExpression->get_update_expression());
+
+    daedalus::core::interpreter::RuntimeValueWrapper scope_result;
+
+	while(daedalus::core::interpreter::evaluate_statement(interpreter, forExpression->get_condition(), for_env).value->IsTrue()) {
+	    std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
+		scope_result = daedalus::core::interpreter::evaluate_scope(
+		    interpreter,
+			forExpression,
+			results,
+			nullptr,
+			for_env,
+			static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::BREAK)
+		);
+
+        if(
+            daedalus::core::interpreter::flag_contains(
+                static_cast<daedalus::core::interpreter::Flags>(scope_result.flags),
+                static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::BREAK)
+            )
+        ) {
+            scope_result.flags = static_cast<daedalus::core::interpreter::Flags>(
+                daedalus::core::interpreter::flag_remove(
+                    static_cast<daedalus::core::interpreter::Flags>(scope_result.flags),
+                    static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::BREAK)
+                )
+            );
+            break;
+        }
+        if(
+            daedalus::core::interpreter::flag_contains(
+                static_cast<daedalus::core::interpreter::Flags>(scope_result.flags),
+                static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::CONTINUE)
+            )
+        ) {
+            scope_result.flags = static_cast<daedalus::core::interpreter::Flags>(
+                daedalus::core::interpreter::flag_remove(
+                    static_cast<daedalus::core::interpreter::Flags>(scope_result.flags),
+                    static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::CONTINUE)
+                )
+            );
+            continue;
+        }
+	}
+
+	return scope_result;
+}
+
 daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter::evaluate_break_expression(
 	daedalus::core::interpreter::Interpreter& interpreter,
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
@@ -547,6 +608,10 @@ void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter) {
 		{
 		    "WhileExpression",
 			&daedalus::entropia::interpreter::evaluate_while_expression
+		},
+		{
+		    "ForExpression",
+			&daedalus::entropia::interpreter::evaluate_for_expression
 		},
 		{
 		    "BreakExpression",
