@@ -43,9 +43,12 @@ namespace daedalus {
 
 			class LoopExpression;
 			class WhileExpression;
+			class ForExpression;
 
 			class BreakExpression;
 			class ContinueExpression;
+
+			class OrExpression;
 
 			class ConditionnalExpression;
 			class ConditionnalStructure;
@@ -197,21 +200,42 @@ namespace daedalus {
     			std::shared_ptr<Identifier> right_contains_identifier();
     		};
 
+            class OrExpression : public daedalus::core::ast::Expression {
+            public:
+                OrExpression(std::shared_ptr<daedalus::core::ast::Expression> value);
+
+                std::shared_ptr<daedalus::core::ast::Expression> get_value();
+
+                virtual std::string type() override;
+          		virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
+          		virtual std::string repr(int indent = 0) override;
+
+            protected:
+                std::shared_ptr<daedalus::core::ast::Expression> value;
+            };
+
             class LoopExpression : public daedalus::core::ast::Scope {
             public:
                 LoopExpression(
-    				std::vector<std::shared_ptr<Expression>> body
+    				std::vector<std::shared_ptr<Expression>> body,
+                    std::shared_ptr<OrExpression> orExpression = nullptr
      			);
+
+                std::shared_ptr<OrExpression> get_or_expression();
 
      			virtual std::string type() override;
      			virtual std::string repr(int indent = 0) override;
+
+            protected:
+                std::shared_ptr<OrExpression> orExpression;
             };
 
             class WhileExpression : public LoopExpression {
             public:
                 WhileExpression(
                     std::vector<std::shared_ptr<Expression>> body,
-                    std::shared_ptr<Expression> condition
+                    std::shared_ptr<Expression> condition,
+                    std::shared_ptr<OrExpression> orExpression = nullptr
                 );
 
                 std::shared_ptr<Expression> get_condition();
@@ -229,7 +253,8 @@ namespace daedalus {
                     std::vector<std::shared_ptr<Expression>> body,
                     std::shared_ptr<Expression> initial_expression,
                     std::shared_ptr<Expression> condition,
-                    std::shared_ptr<Expression> update_expression
+                    std::shared_ptr<Expression> update_expression,
+                    std::shared_ptr<OrExpression> orExpression = nullptr
                 );
 
                 std::shared_ptr<Expression> get_initial_expression();
@@ -239,8 +264,8 @@ namespace daedalus {
      			virtual std::string repr(int indent = 0) override;
 
             protected:
-                std::shared_ptr<Expression> initial_expression;
-                std::shared_ptr<Expression> update_expression;
+                std::shared_ptr<Expression> initialExpression;
+                std::shared_ptr<Expression> updateExpression;
             };
 
             class BreakExpression : public daedalus::core::ast::Expression {

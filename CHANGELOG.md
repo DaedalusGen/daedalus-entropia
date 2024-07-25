@@ -1,23 +1,31 @@
 ```sh
+main.ent
+```
+
+  - Updated code example to test loop + or
+
+```sh
+src/daedalus-entropia/lexer/lexer.cpp
+```
+
+  - Added `OR` token
+
+```sh
 src/daedalus-entropia/parser/ast.cpp
 ```
 
-  - Switched AST classes from `public` members to `protected` with getters (+ setters)
-
-```sh
-src/daedalus-entropia/parser/parser.cpp
-```
-
-  - Switched AST classes from `public` members to `protected` with getters (+ setters)
+  - Added `OrExpression` class and its members and methods
+  - Added `orExpression` field to `LoopExpression`, `WhileExpression` and `ForExpression`
 
 ```sh
 src/include/daedalus/Entropia/parser/ast.hpp
 ```
 
-  - Switched AST classes from `public` members to `protected` with getters (+ setters)
+  - Implemented `OrExpression` class and its methods
+  - Implemented `orExpression` checks to `LoopExpression`, `WhileExpression` and `ForExpression`
 
 ```sh
 src/daedalus-entropia/interpreter/interpreter.cpp
 ```
 
-  - Switched AST classes from `public` members to `protected` with getters (+ setters)
+  - Added or case to loop evaluations

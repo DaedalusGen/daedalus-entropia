@@ -374,13 +374,42 @@ std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::Bi
 
 #pragma endregion
 
+#pragma region OrExpression
+
+daedalus::entropia::ast::OrExpression::OrExpression(std::shared_ptr<daedalus::core::ast::Expression> value) :
+    value(value)
+{}
+
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::OrExpression::get_value() {
+    return this->value;
+}
+
+std::string daedalus::entropia::ast::OrExpression::type() {
+    return "OrExpression";
+}
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::OrExpression::get_constexpr() {
+    this->value = this->value->get_constexpr();
+    return this->shared_from_this();
+}
+std::string daedalus::entropia::ast::OrExpression::repr(int indent) {
+    return std::string(indent, '\t') + "or\n" + this->value->repr(indent + 1);
+}
+
+#pragma endregion
+
 #pragma region Loop
 
 daedalus::entropia::ast::LoopExpression::LoopExpression(
-    std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body
+    std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body,
+    std::shared_ptr<daedalus::entropia::ast::OrExpression> orExpression
 ) :
-    daedalus::core::ast::Scope(body)
+    daedalus::core::ast::Scope(body),
+    orExpression(orExpression)
 {}
+
+std::shared_ptr<daedalus::entropia::ast::OrExpression> daedalus::entropia::ast::LoopExpression::get_or_expression() {
+    return this->orExpression;
+}
 
 std::string daedalus::entropia::ast::LoopExpression::type() {
     return "LoopExpression";
@@ -395,6 +424,10 @@ std::string daedalus::entropia::ast::LoopExpression::repr(int indent) {
 
 	pretty += std::string(indent, '\t') + "}";
 
+	if(this->orExpression != nullptr) {
+	    pretty += " " + this->orExpression->repr();
+	}
+
 	return pretty;
 }
 
@@ -404,9 +437,10 @@ std::string daedalus::entropia::ast::LoopExpression::repr(int indent) {
 
 daedalus::entropia::ast::WhileExpression::WhileExpression(
     std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body,
-    std::shared_ptr<daedalus::core::ast::Expression> condition
+    std::shared_ptr<daedalus::core::ast::Expression> condition,
+    std::shared_ptr<daedalus::entropia::ast::OrExpression> orExpression
 ) :
-    daedalus::entropia::ast::LoopExpression(body),
+    daedalus::entropia::ast::LoopExpression(body, orExpression),
     condition(condition)
 {}
 
@@ -429,6 +463,10 @@ std::string daedalus::entropia::ast::WhileExpression::repr(int indent) {
 
 	pretty += std::string(indent, '\t') + "}";
 
+	if(this->orExpression != nullptr) {
+	    pretty += " " + this->orExpression->repr();
+	}
+
 	return pretty;
 }
 
@@ -440,19 +478,20 @@ daedalus::entropia::ast::ForExpression::ForExpression(
     std::vector<std::shared_ptr<daedalus::core::ast::Expression>> body,
     std::shared_ptr<daedalus::core::ast::Expression> initial_expression,
     std::shared_ptr<daedalus::core::ast::Expression> condition,
-    std::shared_ptr<daedalus::core::ast::Expression> update_expression
+    std::shared_ptr<daedalus::core::ast::Expression> update_expression,
+    std::shared_ptr<daedalus::entropia::ast::OrExpression> orExpression
 ) :
-    daedalus::entropia::ast::WhileExpression(body, condition),
-    initial_expression(initial_expression),
-    update_expression(update_expression)
+    daedalus::entropia::ast::WhileExpression(body, condition, orExpression),
+    initialExpression(initial_expression),
+    updateExpression(update_expression)
 {}
 
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::ForExpression::get_initial_expression() {
-    return this->initial_expression;
+    return this->initialExpression;
 }
 
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::ForExpression::get_update_expression() {
-    return this->update_expression;
+    return this->updateExpression;
 }
 
 std::string daedalus::entropia::ast::ForExpression::type() {
@@ -462,9 +501,9 @@ std::string daedalus::entropia::ast::ForExpression::type() {
 std::string daedalus::entropia::ast::ForExpression::repr(int indent) {
     std::string pretty = std::string(indent, '\t') + "for(\n";
 
-    pretty += this->initial_expression->repr(indent + 1) + "\n" + std::string(indent + 1, '\t') + ";\n";
+    pretty += this->initialExpression->repr(indent + 1) + "\n" + std::string(indent + 1, '\t') + ";\n";
     pretty += this->condition->repr(indent + 1) + "\n" + std::string(indent + 1, '\t') + ";\n";
-    pretty += this->update_expression->repr(indent + 1) + "\n";
+    pretty += this->updateExpression->repr(indent + 1) + "\n";
     pretty += std::string(indent, '\t') + ") {\n";
 
 	for(std::shared_ptr<daedalus::core::ast::Expression> expression : this->body) {
@@ -472,6 +511,10 @@ std::string daedalus::entropia::ast::ForExpression::repr(int indent) {
 	}
 
 	pretty += std::string(indent, '\t') + "}";
+
+	if(this->orExpression != nullptr) {
+	    pretty += " " + this->orExpression->repr();
+	}
 
 	return pretty;
 }

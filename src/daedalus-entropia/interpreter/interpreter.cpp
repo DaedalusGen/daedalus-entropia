@@ -1,3 +1,5 @@
+#include "daedalus/core/interpreter/interpreter.hpp"
+#include <cstddef>
 #include <daedalus/Entropia/interpreter/interpreter.hpp>
 
 daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter::evaluate_identifier(
@@ -354,7 +356,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 ) {
     std::shared_ptr<daedalus::entropia::ast::LoopExpression> loopExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::LoopExpression>(statement);
 
-    daedalus::core::interpreter::RuntimeValueWrapper scope_result;
+    daedalus::core::interpreter::RuntimeValueWrapper scope_result = daedalus::core::interpreter::wrap(nullptr);
 	while(true) {
 	    std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
 		scope_result = daedalus::core::interpreter::evaluate_scope(
@@ -396,6 +398,10 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
         }
 	}
 
+	if(scope_result.value == nullptr) {
+	    scope_result = daedalus::core::interpreter::evaluate_statement(interpreter, loopExpression->get_or_expression(), env);
+	}
+
 	return scope_result;
 }
 
@@ -406,7 +412,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 ) {
     std::shared_ptr<daedalus::entropia::ast::WhileExpression> whileExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::WhileExpression>(statement);
 
-    daedalus::core::interpreter::RuntimeValueWrapper scope_result;
+    daedalus::core::interpreter::RuntimeValueWrapper scope_result = daedalus::core::interpreter::wrap(nullptr);
 	while(daedalus::core::interpreter::evaluate_statement(interpreter, whileExpression->get_condition(), env).value->IsTrue()) {
 	    std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
 		scope_result = daedalus::core::interpreter::evaluate_scope(
@@ -448,6 +454,10 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
         }
 	}
 
+	if(scope_result.value == nullptr) {
+	    scope_result = daedalus::core::interpreter::evaluate_statement(interpreter, whileExpression->get_or_expression(), env);
+	}
+
 	return scope_result;
 }
 
@@ -467,7 +477,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	daedalus::core::interpreter::evaluate_statement(interpreter, forExpression->get_initial_expression(), for_env);
     forExpression->push_back_body(forExpression->get_update_expression());
 
-    daedalus::core::interpreter::RuntimeValueWrapper scope_result;
+    daedalus::core::interpreter::RuntimeValueWrapper scope_result = daedalus::core::interpreter::wrap(nullptr);
 
 	while(daedalus::core::interpreter::evaluate_statement(interpreter, forExpression->get_condition(), for_env).value->IsTrue()) {
 	    std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
@@ -508,6 +518,10 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
             );
             continue;
         }
+	}
+
+	if(scope_result.value == nullptr) {
+	    scope_result = daedalus::core::interpreter::evaluate_statement(interpreter, forExpression->get_or_expression()->get_value(), env);
 	}
 
 	return scope_result;

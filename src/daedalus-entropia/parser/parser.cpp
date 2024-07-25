@@ -594,6 +594,22 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	return std::make_shared<daedalus::entropia::ast::DeclarationExpression>(identifier, expression, type, isMutable);
 }
 
+std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_or_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
+    (void)expect(tokens, "OR", std::runtime_error("Expected or expression"));
+
+    std::shared_ptr<daedalus::core::ast::Expression> value = daedalus::core::parser::parse_expression(
+        parser,
+        tokens,
+        false
+    );
+
+    if(needsSemicolon) {
+	   (void)expect(tokens, "SEMICOLON", std::runtime_error("Expected semicolon at the end of line"));
+	}
+
+	return std::make_shared<daedalus::entropia::ast::OrExpression>(value);
+}
+
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_loop_expression(daedalus::core::parser::Parser &parser, std::vector<daedalus::core::lexer::Token> &tokens, bool needsSemicolon) {
     if(peek(tokens).type != "LOOP") {
 		return parse_declaration_expression(parser, tokens, needsSemicolon);
@@ -606,12 +622,17 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 
 	// TODO Add max iteration to prevent unclosed loop
 	while(peek(tokens).type != "CLOSE_BRACE") {
-	   body.push_back(daedalus::core::parser::parse_expression(parser, tokens, true));
+	    body.push_back(daedalus::core::parser::parse_expression(parser, tokens, true));
 	}
 	(void)eat(tokens);
 
+	std::shared_ptr<daedalus::entropia::ast::OrExpression> orExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::OrExpression>(
+	    parse_or_expression(parser, tokens, needsSemicolon)
+	);
+
 	return std::make_shared<daedalus::entropia::ast::LoopExpression>(
-	    body
+	    body,
+		orExpression
 	);
 }
 
@@ -636,9 +657,14 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	(void)eat(tokens);
 
+	std::shared_ptr<daedalus::entropia::ast::OrExpression> orExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::OrExpression>(
+	    parse_or_expression(parser, tokens, needsSemicolon)
+	);
+
 	return std::make_shared<daedalus::entropia::ast::WhileExpression>(
 	    body,
-		condition
+		condition,
+		orExpression
 	);
 }
 
@@ -669,11 +695,16 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	(void)eat(tokens);
 
+	std::shared_ptr<daedalus::entropia::ast::OrExpression> orExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::OrExpression>(
+	    parse_or_expression(parser, tokens, needsSemicolon)
+	);
+
 	return std::make_shared<daedalus::entropia::ast::ForExpression>(
 	    body,
 		initial_expression,
 		condition,
-		update_expression
+		update_expression,
+		orExpression
 	);
 }
 
