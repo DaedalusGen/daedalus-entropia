@@ -1,5 +1,3 @@
-#include "daedalus/core/interpreter/interpreter.hpp"
-#include <cstddef>
 #include <daedalus/Entropia/interpreter/interpreter.hpp>
 
 daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter::evaluate_identifier(
@@ -7,7 +5,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-	std::shared_ptr<daedalus::entropia::ast::Identifier> identifier = std::dynamic_pointer_cast<daedalus::entropia::ast::Identifier>(statement);
+	auto identifier = std::dynamic_pointer_cast<daedalus::entropia::ast::Identifier>(statement);
 	return daedalus::core::interpreter::wrap(
 	   env->get_value(identifier->get_name())
 	);
@@ -18,7 +16,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-	std::shared_ptr<daedalus::entropia::ast::BooleanExpression> booleanExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::BooleanExpression>(statement);
+	auto booleanExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::BooleanExpression>(statement);
 	return daedalus::core::interpreter::wrap(
 	   std::make_shared<daedalus::entropia::values::BooleanValue>(booleanExpression->get_value())
 	);
@@ -29,7 +27,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-	std::shared_ptr<daedalus::entropia::ast::CharExpression> charExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::CharExpression>(statement);
+	auto charExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::CharExpression>(statement);
 	return daedalus::core::interpreter::wrap(
 	   std::make_shared<daedalus::entropia::values::CharValue>(charExpression->get_value())
 	);
@@ -40,7 +38,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-	std::shared_ptr<daedalus::entropia::ast::StrExpression> strExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::StrExpression>(statement);
+	auto strExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::StrExpression>(statement);
 	return daedalus::core::interpreter::wrap(
 	   std::make_shared<daedalus::entropia::values::StrValue>(strExpression->get_value())
 	);
@@ -51,7 +49,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-	std::shared_ptr<daedalus::entropia::ast::UnaryExpression> unaryExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::UnaryExpression>(statement);
+	auto unaryExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::UnaryExpression>(statement);
 
 	daedalus::core::interpreter::RuntimeValueWrapper term = daedalus::core::interpreter::evaluate_statement(interpreter, unaryExpression->get_term(), env);
 	std::string operator_symbol = unaryExpression->get_operator_symbol();
@@ -70,7 +68,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-	std::shared_ptr<daedalus::entropia::ast::BinaryExpression> binaryExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::BinaryExpression>(statement);
+	auto binaryExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::BinaryExpression>(statement);
 
 	daedalus::core::interpreter::RuntimeValueWrapper left = daedalus::core::interpreter::evaluate_statement(interpreter, binaryExpression->get_left(), env);
 	daedalus::core::interpreter::RuntimeValueWrapper right = daedalus::core::interpreter::evaluate_statement(interpreter, binaryExpression->get_right(), env);
@@ -313,7 +311,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-	std::shared_ptr<daedalus::entropia::ast::AssignationExpression> assignationExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::AssignationExpression>(statement);
+	auto assignationExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::AssignationExpression>(statement);
 
 	return daedalus::core::interpreter::wrap(
 	    env->set_value(
@@ -332,7 +330,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-	std::shared_ptr<daedalus::entropia::ast::DeclarationExpression> declarationExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::DeclarationExpression>(statement);
+	auto declarationExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::DeclarationExpression>(statement);
 
 	return daedalus::core::interpreter::wrap(
 	   env->init_value(
@@ -354,11 +352,11 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-    std::shared_ptr<daedalus::entropia::ast::LoopExpression> loopExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::LoopExpression>(statement);
+    auto loopExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::LoopExpression>(statement);
 
     daedalus::core::interpreter::RuntimeValueWrapper scope_result = daedalus::core::interpreter::wrap(nullptr);
 	while(true) {
-	    std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
+	    auto results = std::vector<daedalus::core::interpreter::RuntimeResult>();
 		scope_result = daedalus::core::interpreter::evaluate_scope(
 		    interpreter,
 			loopExpression,
@@ -410,11 +408,11 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-    std::shared_ptr<daedalus::entropia::ast::WhileExpression> whileExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::WhileExpression>(statement);
+    auto whileExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::WhileExpression>(statement);
 
     daedalus::core::interpreter::RuntimeValueWrapper scope_result = daedalus::core::interpreter::wrap(nullptr);
 	while(daedalus::core::interpreter::evaluate_statement(interpreter, whileExpression->get_condition(), env).value->IsTrue()) {
-	    std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
+	    auto results = std::vector<daedalus::core::interpreter::RuntimeResult>();
 		scope_result = daedalus::core::interpreter::evaluate_scope(
 		    interpreter,
 			whileExpression,
@@ -466,9 +464,9 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-    std::shared_ptr<daedalus::entropia::ast::ForExpression> forExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ForExpression>(statement);
+    auto forExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ForExpression>(statement);
 
-    std::shared_ptr<daedalus::core::env::Environment> for_env = std::make_shared<daedalus::core::env::Environment>(
+    auto for_env = std::make_shared<daedalus::core::env::Environment>(
 		interpreter.envValuesProperties,
 		interpreter.validationRules,
 		env
@@ -556,7 +554,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 	std::shared_ptr<daedalus::core::ast::Statement> statement,
 	std::shared_ptr<daedalus::core::env::Environment> env
 ) {
-    std::shared_ptr<daedalus::entropia::ast::ConditionnalStructure> conditionnalExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ConditionnalStructure>(statement);
+    auto conditionnalExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ConditionnalStructure>(statement);
 
     for(std::shared_ptr<daedalus::entropia::ast::ConditionnalExpression> expression : conditionnalExpression->get_expressions()) {
         bool isTrue = expression->get_condition() == nullptr;
@@ -564,7 +562,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
             isTrue = daedalus::core::interpreter::evaluate_statement(interpreter, expression->get_condition(), env).value->IsTrue();
         }
         if(isTrue) {
-            std::vector<daedalus::core::interpreter::RuntimeResult> results = std::vector<daedalus::core::interpreter::RuntimeResult>();
+            auto results = std::vector<daedalus::core::interpreter::RuntimeResult>();
             daedalus::core::interpreter::RuntimeValueWrapper last = daedalus::core::interpreter::evaluate_scope(
                 interpreter,
                 expression,
@@ -582,7 +580,7 @@ daedalus::core::interpreter::RuntimeValueWrapper daedalus::entropia::interpreter
 
 void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter) {
 
-	std::unordered_map<std::string, daedalus::core::interpreter::ParseStatementFunction> nodeEvaluationFunctions = std::unordered_map<std::string, daedalus::core::interpreter::ParseStatementFunction>({
+	auto nodeEvaluationFunctions = std::unordered_map<std::string, daedalus::core::interpreter::ParseStatementFunction>({
 		{
 			"DeclarationExpression",
 			&daedalus::entropia::interpreter::evaluate_declaration_expression
@@ -641,30 +639,30 @@ void setup_interpreter(daedalus::core::interpreter::Interpreter& interpreter) {
 		}
 	});
 
-	std::vector<std::string> envValuesProperties = std::vector<std::string>({
+	auto envValuesProperties = std::vector<std::string>({
 		"isMutable"
 	});
 
-	daedalus::core::env::EnvValidationRule mutabilityValidation = {
+	auto mutabilityValidation = daedalus::core::env::EnvValidationRule{
 		&daedalus::entropia::env::validate_mutability,
 		std::vector<daedalus::core::env::ValidationRuleSensitivity>({
 			daedalus::core::env::ValidationRuleSensitivity::SET
 		})
 	};
 
-	daedalus::core::env::EnvValidationRule typeCastValidation = {
+	auto typeCastValidation = daedalus::core::env::EnvValidationRule{
 		&daedalus::entropia::env::validate_type_cast,
 		std::vector<daedalus::core::env::ValidationRuleSensitivity>({
 			daedalus::core::env::ValidationRuleSensitivity::SET
 		})
 	};
 
-	std::vector<daedalus::core::env::EnvValidationRule> validationRules = std::vector<daedalus::core::env::EnvValidationRule>({
+	auto validationRules = std::vector<daedalus::core::env::EnvValidationRule>({
 		mutabilityValidation,
 		typeCastValidation
 	});
 
-	std::unordered_map<daedalus::core::interpreter::Flags, bool> flagsReturnStatementBefore = std::unordered_map<daedalus::core::interpreter::Flags, bool>({
+	auto flagsReturnStatementBefore = std::unordered_map<daedalus::core::interpreter::Flags, bool>({
 	    {
 			static_cast<daedalus::core::interpreter::Flags>(daedalus::entropia::interpreter::ValueEscapeFlags::BREAK),
 			true

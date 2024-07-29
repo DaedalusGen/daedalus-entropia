@@ -1,12 +1,23 @@
 ```sh
-src/include/daedalus/Entropia/parser/parser.hpp
+src/daedalus-entropia/lexer/lexer.cpp
 ```
 
-  - Added `check_assignation_type` function
+  - Added `auto` to explicit long types
 
+```sh
+src/daedalus-entropia/parser/ast.cpp
+```
+
+  - Added `auto` to explicit long types
 
 ```sh
 src/daedalus-entropia/parser/parser.cpp
 ```
 
-  - Implemented `check_assignation_type` function and added it to `parse_declaration_expression`and `parse_assignment_expression`
+  - Added `auto` to explicit long types
+
+```sh
+src/daedalus-entropia/interpreter/interpreter.cpp
+```
+
+  - Added `auto` to explicit long types

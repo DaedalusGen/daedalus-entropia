@@ -29,7 +29,7 @@ std::string parse_character(std::string src) {
 }
 
 void setup_lexer(daedalus::core::lexer::Lexer& lexer) {
-	std::vector<daedalus::core::lexer::TokenType> tokenTypes = std::vector<daedalus::core::lexer::TokenType>({
+	auto tokenTypes = std::vector<daedalus::core::lexer::TokenType>({
 		daedalus::core::lexer::make_token_type("LET", "let"),
 		daedalus::core::lexer::make_token_type("MUT", "mut"),
 

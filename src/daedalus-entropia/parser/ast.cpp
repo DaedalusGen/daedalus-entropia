@@ -162,7 +162,7 @@ std::string daedalus::entropia::ast::StrExpression::repr(int indent) {
 
 #pragma region ContainerExpression
 
-std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::ContainerExpression::contains_identifier() {
+std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::ContainerExpression::get_inner_identifier() {
 	return nullptr;
 }
 
@@ -187,15 +187,15 @@ std::string daedalus::entropia::ast::UnaryExpression::get_operator_symbol() {
 	return this->operator_symbol;
 }
 
-std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::UnaryExpression::contains_identifier() {
+std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::UnaryExpression::get_inner_identifier() {
 
 	std::shared_ptr<daedalus::core::ast::Expression> constexprTerm = this->term->get_constexpr();
 
 	if(constexprTerm->type() == "UnaryExpression") {
-		return std::dynamic_pointer_cast<daedalus::entropia::ast::UnaryExpression>(constexprTerm)->contains_identifier();
+		return std::dynamic_pointer_cast<daedalus::entropia::ast::UnaryExpression>(constexprTerm)->get_inner_identifier();
 	}
 	if(constexprTerm->type() == "BinaryExpression") {
-		return std::dynamic_pointer_cast<daedalus::entropia::ast::BinaryExpression>(constexprTerm)->contains_identifier();
+		return std::dynamic_pointer_cast<daedalus::entropia::ast::BinaryExpression>(constexprTerm)->get_inner_identifier();
 	}
 
 	return constexprTerm->type() == "Identifier" ? std::dynamic_pointer_cast<daedalus::entropia::ast::Identifier>(constexprTerm) : nullptr;
@@ -206,7 +206,7 @@ std::string daedalus::entropia::ast::UnaryExpression::type() {
 }
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::UnaryExpression::get_constexpr() {
 	this->term = this->term->get_constexpr();
-	if(std::shared_ptr<BooleanExpression> booleanExpression = std::dynamic_pointer_cast<BooleanExpression>(this->term)) {
+	if(auto booleanExpression = std::dynamic_pointer_cast<BooleanExpression>(this->term)) {
 		if(this->operator_symbol == "!") {
 			booleanExpression->set_value(!booleanExpression->get_value());
 			return booleanExpression;
@@ -247,7 +247,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 	return this->right;
 }
 
-std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::BinaryExpression::contains_identifier() {
+std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::BinaryExpression::get_inner_identifier() {
 	std::shared_ptr<daedalus::entropia::ast::Identifier> leftIdentifier = this->left_contains_identifier();
 	if(leftIdentifier != nullptr) {
 		return leftIdentifier;
@@ -264,8 +264,8 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 	this->right = this->right->get_constexpr();
 
 	if(left->type() == "NumberExpression" && right->type() == "NumberExpression") {
-		std::shared_ptr<daedalus::core::ast::NumberExpression> leftNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(left);
-		std::shared_ptr<daedalus::core::ast::NumberExpression> rightNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(right);
+		auto leftNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(left);
+		auto rightNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(right);
 		if(this->operator_symbol == "+") {
 			return std::make_shared<daedalus::core::ast::NumberExpression>(leftNb->get_value() + rightNb->get_value());
 		}
@@ -291,8 +291,8 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 		throw std::runtime_error("Invalid operator for NumberExpression and NumberExpression");
 	}
 	if(left->type() == "BooleanExpression" && right->type() == "BooleanExpression") {
-		std::shared_ptr<BooleanExpression> leftBool = std::dynamic_pointer_cast<BooleanExpression>(left);
-		std::shared_ptr<BooleanExpression> rightBool = std::dynamic_pointer_cast<BooleanExpression>(right);
+		auto leftBool = std::dynamic_pointer_cast<BooleanExpression>(left);
+		auto rightBool = std::dynamic_pointer_cast<BooleanExpression>(right);
 		if(this->operator_symbol == "&&") {
 			return std::make_shared<BooleanExpression>(leftBool->get_value() && rightBool->get_value());
 		}
@@ -302,8 +302,8 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 		throw std::runtime_error("Invalid operator for BooleanExpression and BooleanExpression");
 	}
 	if(left->type() == "NumberExpression" && right->type() == "BooleanExpression") {
-		std::shared_ptr<daedalus::core::ast::NumberExpression> leftNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(left);
-		std::shared_ptr<BooleanExpression> rightBool = std::dynamic_pointer_cast<BooleanExpression>(right);
+		auto leftNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(left);
+		auto rightBool = std::dynamic_pointer_cast<BooleanExpression>(right);
 		if(this->operator_symbol == "&&") {
 			return std::make_shared<BooleanExpression>(leftNb->get_value() && rightBool->get_value());
 		}
@@ -313,8 +313,8 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::ast::Binary
 		throw std::runtime_error("Invalid operator for NumberExpression and BooleanExpression");
 	}
 	if(left->type() == "BooleanExpression" && right->type() == "NumberExpression") {
-		std::shared_ptr<BooleanExpression> leftBool = std::dynamic_pointer_cast<BooleanExpression>(left);
-		std::shared_ptr<daedalus::core::ast::NumberExpression> rightNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(right);
+		auto leftBool = std::dynamic_pointer_cast<BooleanExpression>(left);
+		auto rightNb = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(right);
 		if(this->operator_symbol == "&&") {
 			return std::make_shared<BooleanExpression>(leftBool->get_value() && rightNb->get_value());
 		}
@@ -350,10 +350,10 @@ std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::Bi
 	std::shared_ptr<daedalus::core::ast::Expression> constexprLeft = this->left->get_constexpr();
 
 	if(constexprLeft->type() == "UnaryExpression") {
-		return std::dynamic_pointer_cast<daedalus::entropia::ast::UnaryExpression>(constexprLeft)->contains_identifier();
+		return std::dynamic_pointer_cast<daedalus::entropia::ast::UnaryExpression>(constexprLeft)->get_inner_identifier();
 	}
 	if(constexprLeft->type() == "BinaryExpression") {
-		return std::dynamic_pointer_cast<daedalus::entropia::ast::BinaryExpression>(constexprLeft)->contains_identifier();
+		return std::dynamic_pointer_cast<daedalus::entropia::ast::BinaryExpression>(constexprLeft)->get_inner_identifier();
 	}
 
 	return constexprLeft->type() == "Identifier" ? std::dynamic_pointer_cast<daedalus::entropia::ast::Identifier>(constexprLeft) : nullptr;
@@ -363,10 +363,10 @@ std::shared_ptr<daedalus::entropia::ast::Identifier> daedalus::entropia::ast::Bi
 	std::shared_ptr<daedalus::core::ast::Expression> constexprRight = this->right->get_constexpr();
 
 	if(constexprRight->type() == "UnaryExpression") {
-		return std::dynamic_pointer_cast<daedalus::entropia::ast::UnaryExpression>(constexprRight)->contains_identifier();
+		return std::dynamic_pointer_cast<daedalus::entropia::ast::UnaryExpression>(constexprRight)->get_inner_identifier();
 	}
 	if(constexprRight->type() == "BinaryExpression") {
-		return std::dynamic_pointer_cast<daedalus::entropia::ast::BinaryExpression>(constexprRight)->contains_identifier();
+		return std::dynamic_pointer_cast<daedalus::entropia::ast::BinaryExpression>(constexprRight)->get_inner_identifier();
 	}
 
 	return constexprRight->type() == "Identifier" ? std::dynamic_pointer_cast<daedalus::entropia::ast::Identifier>(constexprRight) : nullptr;

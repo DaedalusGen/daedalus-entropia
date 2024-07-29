@@ -148,7 +148,7 @@ namespace daedalus {
 
     		class ContainerExpression : public daedalus::core::ast::Expression {
     		public:
-    			virtual std::shared_ptr<Identifier> contains_identifier();
+    			virtual std::shared_ptr<Identifier> get_inner_identifier();
     		};
 
     		class UnaryExpression : public ContainerExpression {
@@ -161,7 +161,7 @@ namespace daedalus {
     			std::shared_ptr<Expression> get_term();
     			std::string get_operator_symbol();
 
-    			virtual std::shared_ptr<Identifier> contains_identifier() override;
+    			virtual std::shared_ptr<Identifier> get_inner_identifier() override;
 
     			virtual std::string type() override;
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
@@ -184,7 +184,7 @@ namespace daedalus {
     			std::string get_operator_symbol();
     			std::shared_ptr<Expression> get_right();
 
-    			virtual std::shared_ptr<Identifier> contains_identifier() override;
+    			virtual std::shared_ptr<Identifier> get_inner_identifier() override;
 
     			virtual std::string type() override;
     			virtual std::shared_ptr<daedalus::core::ast::Expression> get_constexpr() override;
