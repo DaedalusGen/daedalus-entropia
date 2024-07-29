@@ -1,12 +1,12 @@
 ```sh
-main.ent
+src/include/daedalus/Entropia/parser/parser.hpp
 ```
 
-  - Updated code example to test loop + or assignment and if assignment
+  - Added `check_assignation_type` function
+
 
 ```sh
 src/daedalus-entropia/parser/parser.cpp
 ```
 
-  - Added placeholder type checking for loops + conditions (REWORK NEEDED)
-  - Added missing call to `parse_boolean_expression` from `parse_char_expression`
+  - Implemented `check_assignation_type` function and added it to `parse_declaration_expression`and `parse_assignment_expression`

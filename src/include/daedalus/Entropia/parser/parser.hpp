@@ -44,6 +44,8 @@ namespace daedalus {
 
     		std::shared_ptr<daedalus::core::ast::Expression> parse_binary_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon);
 
+            void check_assignation_type(std::shared_ptr<daedalus::core::ast::Expression> expression, std::string type);
+
     		std::shared_ptr<daedalus::core::ast::Expression> parse_assignation_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon);
 
     		std::shared_ptr<daedalus::core::ast::Expression> parse_declaration_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon);
