@@ -104,7 +104,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 		std::string value = eat(tokens).value;
 		return std::make_shared<daedalus::entropia::ast::CharExpression>(get_char(value.substr(1, value.length() - 2)));
 	}
-	return daedalus::entropia::parser::parse_identifier(parser, tokens, needsSemicolon);
+	return daedalus::entropia::parser::parse_boolean_expression(parser, tokens, needsSemicolon);
 }
 
 std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::parse_str_expression(daedalus::core::parser::Parser& parser, std::vector<daedalus::core::lexer::Token>& tokens, bool needsSemicolon) {
@@ -265,8 +265,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	(void)eat(tokens);
 
-	std::shared_ptr<daedalus::core::ast::Expression> expression = daedalus::entropia::parser::parse_binary_expression(parser, tokens, needsSemicolon);
-	expression = expression->get_constexpr();
+	std::shared_ptr<daedalus::core::ast::Expression> expression = daedalus::entropia::parser::parse_binary_expression(parser, tokens, false)->get_constexpr();
 
 	if(std::shared_ptr<daedalus::entropia::ast::ContainerExpression> containerExpression = std::dynamic_pointer_cast<daedalus::entropia::ast::ContainerExpression>(expression)) {
 		if(std::shared_ptr<daedalus::entropia::ast::Identifier> source_identifier = std::dynamic_pointer_cast<daedalus::entropia::ast::ContainerExpression>(expression)->contains_identifier()) {
@@ -279,12 +278,22 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 
 	std::string type = daedalus::entropia::parser::identifiers.at(identifier->get_name());
 
+	std::shared_ptr<daedalus::core::ast::Expression> declared = (
+	    expression->type() == "LoopExpression" ||
+	    expression->type() == "WhileExpression" ||
+	    expression->type() == "ForExpression"
+	) ?
+	    std::dynamic_pointer_cast<daedalus::entropia::ast::LoopExpression>(expression)->get_or_expression()->get_value() :
+		expression->type() == "ConditionnalStructure" ?
+		    std::dynamic_pointer_cast<daedalus::entropia::ast::ConditionnalStructure>(expression)->get_expressions().back()->get_body().back() : // Replace with <ConditionnalStructure>.get_last_value (gets the last value before break)
+		    expression;
+
 	if(type == "i8") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= _I8_MIN && numberExpression->get_value() <= _I8_MAX),
 			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -292,10 +301,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "i16") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= _I16_MIN && numberExpression->get_value() <= _I16_MAX),
 			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -303,10 +312,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "i32") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= _I32_MIN && numberExpression->get_value() <= _I32_MAX),
 			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -314,10 +323,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "i64") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= _I64_MIN && numberExpression->get_value() <= _I64_MAX),
 			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -325,10 +334,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "u8") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= 0 && numberExpression->get_value() <= _UI8_MAX),
 			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -336,10 +345,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "u16") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= 0 && numberExpression->get_value() <= _UI16_MAX),
 			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -347,10 +356,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "u32") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= 0 && numberExpression->get_value() <= _UI32_MAX),
 			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -358,10 +367,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "u64") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= 0 && numberExpression->get_value() <= _UI64_MAX),
 			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -369,10 +378,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "f32") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid f32 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid f32 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= FLT_MIN && numberExpression->get_value() <= FLT_MAX),
 			std::runtime_error("Expected valid u64 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -380,10 +389,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "f64") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid f64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + expression->repr())
+			declared->type() == "NumberExpression",
+			std::runtime_error("Expected valid f64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + declared->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(declared);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= DBL_MIN && numberExpression->get_value() <= DBL_MAX),
 			std::runtime_error("Expected valid u64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -391,20 +400,20 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "bool") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "BooleanExpression",
-			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
+			declared->type() == "BooleanExpression",
+			std::runtime_error("Expected valid boolean value (true / false), got " + declared->repr())
 		)
 	}
 	else if(type == "char") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "CharExpression",
-			std::runtime_error("Expected valid char value, got " + expression->repr())
+			declared->type() == "CharExpression",
+			std::runtime_error("Expected valid char value, got " + declared->repr())
 		)
 	}
 	else if(type == "str") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "StrExpression",
-			std::runtime_error("Expected valid string value, got " + expression->repr())
+			declared->type() == "StrExpression",
+			std::runtime_error("Expected valid string value, got " + declared->repr())
 		)
 	}
 
@@ -444,8 +453,7 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 
 	(void)expect(tokens, "ASSIGN", std::runtime_error("Expected assignment symbol"));
 
-	std::shared_ptr<daedalus::core::ast::Expression> expression = daedalus::entropia::parser::parse_binary_expression(parser, tokens, needsSemicolon)->get_constexpr();
-	expression = expression->get_constexpr();
+	std::shared_ptr<daedalus::core::ast::Expression> expression = daedalus::core::parser::parse_expression(parser, tokens, false)->get_constexpr();
 
 	daedalus::entropia::parser::identifiers[identifier->get_name()] = type;
 
@@ -458,12 +466,22 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 		}
 	}
 
+	std::shared_ptr<daedalus::core::ast::Expression> assignee = (
+	    expression->type() == "LoopExpression" ||
+	    expression->type() == "WhileExpression" ||
+	    expression->type() == "ForExpression"
+	) ?
+	    std::dynamic_pointer_cast<daedalus::entropia::ast::LoopExpression>(expression)->get_or_expression()->get_value() :
+		expression->type() == "ConditionnalStructure" ?
+		    std::dynamic_pointer_cast<daedalus::entropia::ast::ConditionnalStructure>(expression)->get_expressions().back()->get_body().back() : // Replace with <ConditionnalStructure>.get_last_value (gets the last value before break)
+		    expression;
+
 	if(type == "i8") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + expression->repr())
+		    assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= _I8_MIN && numberExpression->get_value() <= _I8_MAX),
 			std::runtime_error("Expected valid i8 value (" + std::to_string(_I8_MIN) + " - " + std::to_string(_I8_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -471,10 +489,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "i16") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= _I16_MIN && numberExpression->get_value() <= _I16_MAX),
 			std::runtime_error("Expected valid i16 value (" + std::to_string(_I16_MIN) + " - " + std::to_string(_I16_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -482,10 +500,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "i32") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= _I32_MIN && numberExpression->get_value() <= _I32_MAX),
 			std::runtime_error("Expected valid i32 value (" + std::to_string(_I32_MIN) + " - " + std::to_string(_I32_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -493,10 +511,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "i64") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= _I64_MIN && numberExpression->get_value() <= _I64_MAX),
 			std::runtime_error("Expected valid i64 value (" + std::to_string(_I64_MIN) + " - " + std::to_string(_I64_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -504,10 +522,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "u8") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= 0 && numberExpression->get_value() <= _UI8_MAX),
 			std::runtime_error("Expected valid u8 value (0 - " + std::to_string(_UI8_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -515,10 +533,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "u16") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= 0 && numberExpression->get_value() <= _UI16_MAX),
 			std::runtime_error("Expected valid u16 value (0 - " + std::to_string(_UI16_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -526,10 +544,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "u32") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= 0 && numberExpression->get_value() <= _UI32_MAX),
 			std::runtime_error("Expected valid u32 value (0 - " + std::to_string(_UI32_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -537,10 +555,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "u64") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= 0 && numberExpression->get_value() <= _UI64_MAX),
 			std::runtime_error("Expected valid u64 value (0 - " + std::to_string(_UI64_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -548,10 +566,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "f32") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid f32 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid f32 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= FLT_MIN && numberExpression->get_value() <= FLT_MAX),
 			std::runtime_error("Expected valid u64 value (" + std::to_string(FLT_MIN) + " - " + std::to_string(FLT_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -559,10 +577,10 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "f64") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "NumberExpression",
-			std::runtime_error("Expected valid f64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + expression->repr())
+			assignee->type() == "NumberExpression",
+			std::runtime_error("Expected valid f64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + assignee->repr())
 		)
-		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(expression);
+		std::shared_ptr<daedalus::core::ast::NumberExpression> numberExpression = std::dynamic_pointer_cast<daedalus::core::ast::NumberExpression>(assignee);
 		DAE_ASSERT_TRUE(
 			(numberExpression->get_value() >= DBL_MIN && numberExpression->get_value() <= DBL_MAX),
 			std::runtime_error("Expected valid u64 value (" + std::to_string(DBL_MIN) + " - " + std::to_string(DBL_MAX) + "), got " + std::to_string(numberExpression->get_value()))
@@ -570,20 +588,20 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
 	}
 	else if(type == "bool") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "BooleanExpression",
-			std::runtime_error("Expected valid boolean value (true / false), got " + expression->repr())
+			assignee->type() == "BooleanExpression",
+			std::runtime_error("Expected valid boolean value (true / false), got " + assignee->repr())
 		)
 	}
 	else if(type == "char") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "CharExpression",
-			std::runtime_error("Expected valid char value, got " + expression->repr())
+			assignee->type() == "CharExpression",
+			std::runtime_error("Expected valid char value, got " + assignee->repr())
 		)
 	}
 	else if(type == "str") {
 		DAE_ASSERT_TRUE(
-			expression->type() == "StrExpression",
-			std::runtime_error("Expected valid string value, got " + expression->repr())
+			assignee->type() == "StrExpression",
+			std::runtime_error("Expected valid string value, got " + assignee->repr())
 		)
 	}
 
@@ -787,14 +805,14 @@ std::shared_ptr<daedalus::core::ast::Expression> daedalus::entropia::parser::par
         expressions.push_back(
             std::dynamic_pointer_cast<daedalus::entropia::ast::ConditionnalExpression>(parse_conditionnal_expression(parser, tokens, before))
         );
-        before = expressions.at(expressions.size() - 1);
+        before = expressions.back();
         if(before->get_condition() == nullptr) {
             break;
         }
     } while(peek(tokens).type == "IF" || peek(tokens).type == "ELSE");
 
     DAE_ASSERT_TRUE(
-        expressions.at(expressions.size() - 1)->get_before() != nullptr,
+        expressions.back()->get_before() != nullptr,
         std::runtime_error("Else block missing")
     )
 
